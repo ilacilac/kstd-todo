@@ -14,3 +14,7 @@ export const deleteTodoFromServer = async (id: string) => {
 export const createTodoToServer = async (newTodo: Todo) => {
   await axios.post("http://localhost:3000/api/todos", newTodo);
 };
+
+export const updateTodosToServer = async (todos: Todo[]) => {
+  await axios.put("http://localhost:3000/api/todos", todos);
+};

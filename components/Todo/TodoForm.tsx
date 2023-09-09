@@ -36,7 +36,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodosArray }) => {
   const [startDate, setStartDate] = useState("2022-04-12");
   const [endDate, setEndDate] = useState("");
   const [priority, setPriority] = useState("상");
-  const [status, setStatus] = useState(false);
+  const [isDone, setIsDone] = useState(false);
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -49,7 +49,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodosArray }) => {
       startDate,
       endDate,
       priority,
-      status,
+      isDone,
     };
 
     if (!title || !task) {

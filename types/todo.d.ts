@@ -6,5 +6,5 @@ export type Todo = {
   startDate: string;
   endDate: string;
   priority: string;
-  status: boolean;
+  isDone: boolean;
 };
