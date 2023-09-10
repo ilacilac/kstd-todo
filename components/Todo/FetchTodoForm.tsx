@@ -1,4 +1,4 @@
-// components/TodoForm.tsx
+// components/FetchTodoForm.tsx
 
 import React, { Dispatch, SetStateAction, useState } from "react";
 import {
@@ -18,49 +18,50 @@ import {
 
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 
-import { createTodoToServer } from "service/todos";
+import { createTodoToServer, updateTodosToServer } from "service/todos";
 import { v4 as uuidv4 } from "uuid";
 import { Todo } from "../../types/todo";
 
-import dayjs from "dayjs";
-
 type TodoFormProps = {
+  todo: Todo;
   todos: Todo[];
+  handleClose: () => void;
   setTodosArray: Dispatch<SetStateAction<Todo[]>>;
 };
 
-const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodosArray }) => {
-  const [task, setTask] = useState("");
-  const [category, setCategory] = useState("기타");
-  const [startDate, setStartDate] = useState("2022-04-12");
-  const [endDate, setEndDate] = useState("");
-  const [priority, setPriority] = useState("상");
-  const [isDone, setIsDone] = useState(false);
+const FetchTodoForm: React.FC<TodoFormProps> = ({
+  todo,
+  todos,
+  setTodosArray,
+  handleClose,
+}) => {
+  const [task, setTask] = useState(todo.task);
+  const [category, setCategory] = useState(todo.category);
+  const [startDate, setStartDate] = useState(todo.startDate);
+  const [endDate, setEndDate] = useState(todo.endDate);
+  const [priority, setPriority] = useState(todo.priority);
+  const [isDone, setIsDone] = useState(todo.isDone);
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
-
-    const newTodo = {
-      id: uuidv4(),
-      task,
-      category,
-      startDate,
-      endDate,
-      priority,
-      isDone,
-    };
-
-    if (!task) {
-      alert("할 일을 모두 입력해주세요.");
-      return false;
-    }
-    createTodoToServer(newTodo).then(() => {
-      setTodosArray([...todos, newTodo]);
-    });
-  };
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setCategory(event.target.value as string);
+    // 1. todos를 전역 state에 저장 -> re render
+    // 2. 변경된 todos를 파일에 저장
+    const newTodos = todos.map((_todo) =>
+      _todo.id === todo.id
+        ? {
+            ..._todo,
+            task,
+            category,
+            startDate,
+            endDate,
+            priority,
+            isDone,
+          }
+        : _todo
+    );
+    updateTodosToServer(newTodos);
+    setTodosArray(newTodos);
+    handleClose();
   };
 
   return (
@@ -108,10 +109,10 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodosArray }) => {
         type="submit"
         disabled={task ? false : true}
       >
-        추가하기
+        수정하기
       </Button>
     </FormGroup>
   );
 };
 
-export default TodoForm;
+export default FetchTodoForm;

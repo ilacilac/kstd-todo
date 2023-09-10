@@ -6,7 +6,6 @@ import { Dispatch, SetStateAction } from "react";
 
 type TodoListProps = {
   todos: Todo[];
-  completed: Todo[];
   setTodosArray: Dispatch<SetStateAction<Todo[]>>;
   deleteTodo: (id: string) => void;
 };
@@ -42,7 +41,9 @@ const TodoList: React.FC<TodoListProps> = ({
                 key={todo.id}
                 index={index}
                 todo={todo}
+                todos={todos}
                 deleteTodo={deleteTodo}
+                setTodosArray={setTodosArray}
               />
             ))}
             {provided.placeholder}
