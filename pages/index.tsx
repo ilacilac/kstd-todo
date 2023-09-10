@@ -44,7 +44,7 @@ const IndexPage: React.FC<IndexProps> = ({ todos }) => {
       return;
 
     let add: Todo;
-    let newTodos = todos;
+    let newTodos = todosArray;
 
     add = newTodos[source.index];
 
@@ -56,7 +56,7 @@ const IndexPage: React.FC<IndexProps> = ({ todos }) => {
 
     // 드롭이 발생한 곳에 add를 넣어줌
     if (destination.droppableId === "inbox-column") {
-      newTodos.splice(destination.index, 0, { ...add, isDone: false });
+      newTodos.splice(destination.index, 0, { ...add });
     }
 
     // todos와 completed 업데이트

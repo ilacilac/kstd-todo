@@ -3,17 +3,10 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import {
   Button,
-  Checkbox,
-  FilledTextFieldProps,
-  FormControl,
   FormGroup,
   FormHelperText,
-  Input,
   MenuItem,
-  OutlinedTextFieldProps,
-  StandardTextFieldProps,
   TextField,
-  TextFieldVariants,
 } from "@mui/material";
 
 import Select, { SelectChangeEvent } from "@mui/material/Select";
@@ -54,8 +47,9 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodosArray }) => {
       alert("할 일을 모두 입력해주세요.");
       return false;
     }
-    createTodoToServer(newTodo).then(() => {
+    await createTodoToServer(newTodo).then(() => {
       setTodosArray([...todos, newTodo]);
+      setTask("");
     });
   };
 

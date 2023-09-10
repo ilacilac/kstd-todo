@@ -19,6 +19,7 @@ const listItemStyle = {
   display: "flex",
   justifyContent: "space-between",
   border: "1px solid #dddddd",
+  marginTop: "10px",
 };
 const buttonCommonStyle = {
   // padding: 0,

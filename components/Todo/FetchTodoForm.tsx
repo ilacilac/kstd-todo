@@ -50,6 +50,7 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
       _todo.id === todo.id
         ? {
             ..._todo,
+            id: todo.id,
             task,
             category,
             startDate,
