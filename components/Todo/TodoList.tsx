@@ -1,5 +1,5 @@
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { List } from "@mui/material";
+import { Box, List } from "@mui/material";
 import { Todo } from "../../types/todo";
 import TodoListItem from "./TodoListItem";
 import { Dispatch, SetStateAction } from "react";
@@ -35,7 +35,7 @@ const TodoList: React.FC<TodoListProps> = ({
   return (
     <Droppable droppableId="inbox-column">
       {(provided) => (
-        <div ref={provided.innerRef} {...provided.droppableProps}>
+        <Box ref={provided.innerRef} {...provided.droppableProps}>
           <List>
             {todos.map((todo, index) => (
               <TodoListItem
@@ -47,7 +47,7 @@ const TodoList: React.FC<TodoListProps> = ({
             ))}
             {provided.placeholder}
           </List>
-        </div>
+        </Box>
       )}
     </Droppable>
   );

@@ -1,5 +1,6 @@
-import { Button, ListItem, Typography } from "@mui/material";
 import React from "react";
+import { Button, ListItem, Typography } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Draggable } from "react-beautiful-dnd";
 import { Todo } from "../../types/todo";
 
@@ -9,13 +10,20 @@ type TodoListItemProps = {
   deleteTodo: (id: string) => void;
 };
 
-const listItemStyle = { border: "1px solid #dddddd" };
+const listItemStyle = {
+  display: "flex",
+  justifyContent: "space-between",
+  border: "1px solid #dddddd",
+};
 
 const TodoListItem: React.FC<TodoListItemProps> = ({
   todo,
   index,
   deleteTodo,
 }) => {
+  const onClick = (todo: Todo) => {
+    console.log("a");
+  };
   return (
     <Draggable draggableId={todo.id} index={index}>
       {(provided) => (
@@ -24,10 +32,14 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
+          onClick={() => {
+            onClick(todo);
+          }}
         >
-          {/* TodoItem 컴포넌트에 각 todo를 넘겨줌 */}
           <Typography>{todo.task}</Typography>
-          <Button onClick={() => deleteTodo(todo.id)}>삭제</Button>
+          <Button onClick={() => deleteTodo(todo.id)} title="삭제">
+            <DeleteIcon />
+          </Button>
         </ListItem>
       )}
     </Draggable>
