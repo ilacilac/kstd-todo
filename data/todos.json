@@ -1,16 +1,7 @@
 [
   {
-    "id": "fd402a32-eeda-4a45-b366-0a9163c178ec",
-    "task": "ㅇㅁㄴㅇㅁㄴㅇㅁㄴㅇ",
-    "category": "기타",
-    "startDate": "2022-04-12",
-    "endDate": "",
-    "priority": "상",
-    "isDone": false
-  },
-  {
     "id": "5210bdcf-1190-41ec-a687-4a62581ffdf9",
-    "task": "엄마 도와주기",
+    "task": "타입스크립트 공부하기",
     "category": "기타",
     "startDate": "2022-04-12",
     "endDate": "",
@@ -19,26 +10,8 @@
   },
   {
     "id": "b6c40004-94a5-497f-ac6c-18332d4ac8d8",
-    "task": "sadasd asd",
+    "task": "과제완료하기",
     "category": "기타",
-    "startDate": "2022-04-12",
-    "endDate": "",
-    "priority": "상",
-    "isDone": false
-  },
-  {
-    "id": "841da207-054d-4abc-8845-a9e532019319",
-    "task": "아빠 도와드리기",
-    "category": "기타",
-    "startDate": "2022-04-12",
-    "endDate": "",
-    "priority": "상",
-    "isDone": false
-  },
-  {
-    "id": "e0428745-624c-4f79-a12d-9041a893f378",
-    "task": "응애???",
-    "category": "회사",
     "startDate": "2022-04-12",
     "endDate": "",
     "priority": "상",
