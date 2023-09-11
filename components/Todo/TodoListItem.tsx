@@ -1,5 +1,12 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
-import { Box, Button, Checkbox, ListItem, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  ListItem,
+  styled,
+  Typography,
+} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { Draggable } from "react-beautiful-dnd";
@@ -7,6 +14,8 @@ import { Todo } from "../../types/todo";
 import ModalPortal from "components/Modal/ModalPortal";
 import TodoModal from "components/Modal/TodoModal";
 import { updateTodosToServer } from "service/todos";
+import dayjs from "dayjs";
+import { parseISO, format } from "date-fns";
 
 type TodoListItemProps = {
   todo: Todo;
@@ -14,17 +23,6 @@ type TodoListItemProps = {
   index: number;
   deleteTodo: (id: string) => void;
   setTodosArray: Dispatch<SetStateAction<Todo[]>>;
-};
-
-const listItemStyle = {
-  display: "flex",
-  justifyContent: "space-between",
-  border: "1px solid #dddddd",
-  marginTop: "10px",
-};
-const buttonCommonStyle = {
-  // padding: 0,
-  minWidth: "auto",
 };
 
 const TodoListItem: React.FC<TodoListItemProps> = ({
@@ -42,8 +40,7 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
     setOpen(false);
   };
 
-  const onClick = (todo: Todo) => {
-    console.log("a");
+  const onClick = () => {
     handleOpen();
   };
 
@@ -58,36 +55,62 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
     <>
       <Draggable draggableId={todo.id} index={index}>
         {(provided) => (
-          <ListItem
-            sx={listItemStyle}
+          <ListItemStyle
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
           >
-            <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box
+              sx={{ display: "flex", alignItems: "center", maxWidth: "90%" }}
+            >
               <Checkbox
+                aria-label={todo.isDone ? "완료" : "미완료"}
                 checked={todo.isDone}
                 onChange={() => handleCheckbox(todo.id)}
               />
-              <Typography>{todo.task}</Typography>
+              <Typography
+                sx={
+                  todo.isDone
+                    ? {
+                        textDecoration: "line-through",
+                        color: "#999",
+                      }
+                    : {
+                        fontWeight: "bold",
+                        color: "#333",
+                      }
+                }
+              >
+                {todo.task}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: 12,
+                  color: "#999999",
+                  marginLeft: "5px",
+                }}
+              >
+                ({dayjs(todo.startDate).format("YYYY/MM/DD")} ~{" "}
+                {dayjs(todo.endDate).format("YYYY/MM/DD")})
+              </Typography>
             </Box>
             <Box>
               <Button
                 sx={buttonCommonStyle}
-                onClick={() => onClick(todo)}
-                title="삭제"
+                onClick={() => onClick()}
+                title="수정하기 모달창이 열립니다."
               >
                 <EditIcon />
               </Button>
               <Button
                 sx={buttonCommonStyle}
                 onClick={() => deleteTodo(todo.id)}
-                title="삭제"
+                title="삭제하기"
               >
                 <DeleteIcon />
               </Button>
             </Box>
-          </ListItem>
+          </ListItemStyle>
         )}
       </Draggable>
       {open && (
@@ -105,4 +128,19 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
   );
 };
 
+const ListItemStyle = styled(ListItem)`
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #dddddd;
+  border-radius: 5px;
+  margin-top: 10px;
+  &:first-child {
+    margin-top: 0;
+  }
+`;
+
+const buttonCommonStyle = {
+  // padding: 0,
+  minWidth: "auto",
+};
 export default TodoListItem;

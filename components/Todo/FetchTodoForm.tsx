@@ -1,7 +1,8 @@
 // components/FetchTodoForm.tsx
 
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
+  Box,
   Button,
   Checkbox,
   FilledTextFieldProps,
@@ -9,18 +10,24 @@ import {
   FormGroup,
   FormHelperText,
   Input,
+  InputLabel,
   MenuItem,
-  OutlinedTextFieldProps,
-  StandardTextFieldProps,
+  styled,
   TextField,
   TextFieldVariants,
+  Typography,
 } from "@mui/material";
 
+import "react-datepicker/dist/react-datepicker.css";
+import { ko } from "date-fns/locale";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import dayjs from "dayjs";
+import DatePicker from "react-datepicker";
 import { createTodoToServer, updateTodosToServer } from "service/todos";
 import { v4 as uuidv4 } from "uuid";
 import { Todo } from "../../types/todo";
+import { parseISO, format } from "date-fns";
 
 type TodoFormProps = {
   todo: Todo;
@@ -37,11 +44,14 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
 }) => {
   const [task, setTask] = useState(todo.task);
   const [category, setCategory] = useState(todo.category);
-  const [startDate, setStartDate] = useState(todo.startDate);
-  const [endDate, setEndDate] = useState(todo.endDate);
+  const [startDate, setStartDate] = useState(new Date(todo.startDate));
+  const [endDate, setEndDate] = useState(new Date(todo.endDate));
   const [priority, setPriority] = useState(todo.priority);
   const [isDone, setIsDone] = useState(todo.isDone);
-
+  useEffect(() => {
+    console.log(startDate, endDate);
+    console.log(new Date(startDate), endDate);
+  }, []);
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     // 1. todos를 전역 state에 저장 -> re render
@@ -67,53 +77,146 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
 
   return (
     <FormGroup>
-      <TextField
-        value={task}
-        onChange={(e) => setTask(e.target.value)}
-        // placeholder="내용을 입력해주세요."
-        required
-        id="task"
-        label="할일"
-      />
-      <Select
-        labelId="category"
-        id="category"
-        value={category}
-        label="카테고리"
-        onChange={(e) => setCategory(e.target.value)}
-      >
-        <MenuItem value={"기타"}>기타</MenuItem>
-        <MenuItem value={"회사"}>회사</MenuItem>
-        <MenuItem value={"취미"}>취미</MenuItem>
-      </Select>
-      <FormHelperText>우선순위</FormHelperText>
-      <Select
-        labelId="priority"
-        id="priority"
-        value={priority}
-        label="우선순위"
-        onChange={(e) => setPriority(e.target.value)}
-      >
-        <MenuItem value={"상"}>상</MenuItem>
-        <MenuItem value={"중"}>중</MenuItem>
-        <MenuItem value={"하"}>하</MenuItem>
-      </Select>
+      <FormControl fullWidth sx={{ marginTop: "10px" }}>
+        <TextField
+          value={task}
+          onChange={(e) => setTask(e.target.value)}
+          // placeholder="내용을 입력해주세요."
+          required
+          id="task"
+          label="할일"
+        />
+      </FormControl>
+      <FormControl fullWidth sx={{ marginTop: "10px" }}>
+        <InputLabel id="category-label">카테고리</InputLabel>
+        <Select
+          labelId="category"
+          id="category"
+          value={category}
+          label="카테고리"
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <MenuItem value={"회사"}>회사</MenuItem>
+          <MenuItem value={"공부"}>공부</MenuItem>
+          <MenuItem value={"운동"}>운동</MenuItem>
+          <MenuItem value={"취미"}>취미</MenuItem>
+          <MenuItem value={"기타"}>기타</MenuItem>
+        </Select>
+      </FormControl>
+      <FormControl fullWidth sx={{ marginTop: "10px" }}>
+        <InputLabel id="priority-label">우선순위</InputLabel>
 
-      {/* <Checkbox
-        aria-label="완료"
-        checked={status}
-        onChange={(e) => setStatus(e.target.checked)}
-      /> */}
+        <Select
+          labelId="priority"
+          id="priority"
+          value={priority}
+          label="우선순위"
+          onChange={(e) => setPriority(e.target.value)}
+        >
+          <MenuItem value={"상"}>상</MenuItem>
+          <MenuItem value={"중"}>중</MenuItem>
+          <MenuItem value={"하"}>하</MenuItem>
+        </Select>
+      </FormControl>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <Typography>완료여부</Typography>
+        <Checkbox
+          aria-label="완료"
+          checked={isDone}
+          onChange={(e) => setIsDone(e.target.checked)}
+        />
+      </Box>
+
+      <DateWrapStyled>
+        <StartDateWrapStyled>
+          <FormHelperText>시작일</FormHelperText>
+          <StartDateStyled>
+            <CalendarTodayIcon />
+            <DateStyled
+              selected={startDate}
+              // locale={ko}
+              maxDate={endDate}
+              onChange={(date: Date) => {
+                setStartDate(date);
+              }}
+            />
+          </StartDateStyled>
+        </StartDateWrapStyled>
+        <EndDateWrapStyled>
+          <FormHelperText sx={{ marginLeft: "5px" }}>종료일</FormHelperText>
+          <EndDateStyled>
+            <CalendarTodayIcon />
+            <DateStyled
+              selected={endDate}
+              locale={ko}
+              onChange={(date: Date) => {
+                setEndDate(date);
+              }}
+            />
+          </EndDateStyled>
+        </EndDateWrapStyled>
+      </DateWrapStyled>
 
       <Button
         onClick={handleClick}
         type="submit"
+        variant="contained"
         disabled={task ? false : true}
+        sx={{ marginTop: "10px", padding: "10px 0" }}
       >
         수정하기
       </Button>
     </FormGroup>
   );
 };
+
+const DateWrapStyled = styled(Box)`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const StartDateWrapStyled = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+`;
+const EndDateWrapStyled = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  width: 49%;
+`;
+
+const StartDateStyled = styled(Box)`
+  display: flex;
+  align-items: center;
+
+  border: none;
+  border-radius: 5px;
+  padding: 0px 15px;
+  // margin: 0 5px;
+  background-color: #ededed;
+`;
+const EndDateStyled = styled(Box)`
+  display: flex;
+  align-items: center;
+
+  border-radius: 5px;
+  border: none;
+  padding: 0px 15px;
+
+  background-color: #ededed;
+`;
+
+const DateStyled = styled(DatePicker)`
+  padding: 15px 0px;
+  margin-left: 10px;
+  border: none;
+  background-color: transparent;
+`;
 
 export default FetchTodoForm;

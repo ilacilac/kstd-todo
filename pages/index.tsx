@@ -16,6 +16,8 @@ import {
   DropResult,
   resetServerContext,
 } from "react-beautiful-dnd";
+import { Box, styled } from "@mui/material";
+import Head from "next/head";
 
 type IndexProps = {
   todos: Todo[];
@@ -66,19 +68,19 @@ const IndexPage: React.FC<IndexProps> = ({ todos }) => {
   };
 
   return (
-    <>
+    <BoxWrapStyled>
       <DragDropContext onDragEnd={onDragEnd}>
-        <section>
+        <SectionStyled>
           <TodoForm setTodosArray={setTodosArray} todos={todosArray}></TodoForm>
           <TodoList
             setTodosArray={setTodosArray}
             todos={todosArray}
             deleteTodo={deleteTodo}
           />
-        </section>
+        </SectionStyled>
       </DragDropContext>
       <div id="modal-root"></div>
-    </>
+    </BoxWrapStyled>
   );
 };
 
@@ -98,5 +100,19 @@ export const getServerSideProps: GetServerSideProps = async () => {
     },
   };
 };
+
+const SectionStyled = styled("section")`
+  display: flex;
+  flex-direction: column;
+  // justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
+const BoxWrapStyled = styled("div")`
+  margin: 0;
+  padding: 0;
+
+  width: 100%;
+`;
 
 export default IndexPage;
