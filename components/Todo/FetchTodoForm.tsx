@@ -34,6 +34,7 @@ type TodoFormProps = {
   todos: Todo[];
   handleClose: () => void;
   setTodosArray: Dispatch<SetStateAction<Todo[]>>;
+  setCategoriesArray: Dispatch<SetStateAction<string[]>>;
   categories: string[];
 };
 
@@ -43,6 +44,7 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
   setTodosArray,
   handleClose,
   categories,
+  setCategoriesArray,
 }) => {
   const [task, setTask] = useState(todo.task);
   const [category, setCategory] = useState(todo.category);
@@ -53,8 +55,7 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
-    // 1. todos를 전역 state에 저장 -> re render
-    // 2. 변경된 todos를 파일에 저장
+
     const newTodos = todos.map((_todo) =>
       _todo.id === todo.id
         ? {
@@ -69,9 +70,13 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
           }
         : _todo
     );
-    console.log(newTodos);
+
     updateTodosToServer(newTodos);
     setTodosArray(newTodos);
+
+    const newCategories = new Set(newTodos.map((todo: Todo) => todo.category));
+    const newUniqueCategories = [...newCategories] as string[];
+    setCategoriesArray(newUniqueCategories);
     handleClose();
   };
 
@@ -101,14 +106,14 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
       <CategoriesBox>
         {categories &&
           categories.map((category) => (
-            <Button
+            <CategoryButton
               onClick={() => setCategory(category)}
               variant="outlined"
               size="small"
               key={category}
             >
               {category}
-            </Button>
+            </CategoryButton>
           ))}
       </CategoriesBox>
       <FormControl fullWidth sx={{ marginTop: "10px" }}>
@@ -193,8 +198,13 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
 };
 
 const CategoriesBox = styled(Box)`
-  margin-top: 10px;
+  margin: 10px 0;
   display: flex;
+`;
+
+const CategoryButton = styled(Button)`
+  margin-right: 5px;
+  border-radius: 30px;
 `;
 const DateWrapStyled = styled(Box)`
   display: flex;

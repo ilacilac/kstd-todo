@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 type TodoListProps = {
   todos: Todo[];
   setTodosArray: Dispatch<SetStateAction<Todo[]>>;
+  setCategoriesArray: Dispatch<SetStateAction<string[]>>;
   deleteTodo: (id: string) => void;
   categories: string[];
 };
@@ -25,6 +26,7 @@ const TodoList: React.FC<TodoListProps> = ({
   setTodosArray,
   deleteTodo,
   categories,
+  setCategoriesArray,
 }) => {
   const { category } = useRouter().query;
   // 드래그가 끝났을 때의 동작을 지정해주는 함수
@@ -62,8 +64,6 @@ const TodoList: React.FC<TodoListProps> = ({
     updateTodosToServer(newTodos);
   };
 
-  console.log(category);
-
   return (
     <TodoListWrapStyled>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -85,6 +85,7 @@ const TodoList: React.FC<TodoListProps> = ({
                       deleteTodo={deleteTodo}
                       setTodosArray={setTodosArray}
                       categories={categories}
+                      setCategoriesArray={setCategoriesArray}
                     />
                   ))}
                 </List>
@@ -101,6 +102,7 @@ const TodoList: React.FC<TodoListProps> = ({
                           todos={todos}
                           deleteTodo={deleteTodo}
                           setTodosArray={setTodosArray}
+                          setCategoriesArray={setCategoriesArray}
                           categories={categories}
                         />
                       ) : (
@@ -123,7 +125,7 @@ const TodoList: React.FC<TodoListProps> = ({
 
 const TodoListWrapStyled = styled(Box)`
   width: 80%;
-  margin: 20px;
+
   padding: 20px;
   background-color: #ffffff;
   border-radius: 10px;

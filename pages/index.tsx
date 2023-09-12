@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 
 import { readTodosFromFile, writeTodosToFile } from "../lib/fileHandler";
@@ -34,24 +34,34 @@ const IndexPage: React.FC<IndexProps> = ({ todos }) => {
     // const todos = todosArray.filter((todo) => todo.id !== id);
     await deleteTodoFromServer(id);
     const newTodos = await getTodosFromServer();
+    const newCategories = new Set(newTodos.map((todo: Todo) => todo.category));
+    const newUniqueCategories = [...newCategories] as string[];
+
     setTodosArray(newTodos);
+    setCategoriesArray(newUniqueCategories);
   };
 
-  console.log(uniqueCategories);
   return (
     <BoxWrapStyled>
       <ListStyled>
-        {uniqueCategories.map((category) => (
+        {categoriesArray.map((category) => (
           <ListItemStyled key={category}>
             <LinkStyled href={`/todos/${category}`}>{category}</LinkStyled>
           </ListItemStyled>
         ))}
       </ListStyled>
+      <TodoForm
+        setTodosArray={setTodosArray}
+        todos={todosArray}
+        categories={categoriesArray}
+        setCategoriesArray={setCategoriesArray}
+      ></TodoForm>
       <TodoList
         todos={todosArray}
         setTodosArray={setTodosArray}
         deleteTodo={deleteTodo}
         categories={categoriesArray}
+        setCategoriesArray={setCategoriesArray}
       />
       <div id="modal-root"></div>
     </BoxWrapStyled>
@@ -87,31 +97,34 @@ const ListStyled = styled(List)`
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: nowrap;
+  flex-direction: row;
+
+  overflow-x: scroll;
 `;
-const LinkStyled = styled(Link)`
-  display: block;
-  height: 100%;
-  width: 100%;
-  padding: 5px 15px;
-  text-align: center;
-`;
+
 const ListItemStyled = styled(ListItem)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  border: "2px solid",
-  borderRadius: "5px",
-  margin: "20px",
+  borderRadius: "25px",
+  margin: "10px 5px",
+  backgroundColor: theme.palette.primary.light,
+  fontSize: "16px",
+  width: "auto",
 
-  fontSize: "18px",
-  borderColor: theme.palette.primary.main, // var(--mui-palette-primary-main)
   "&:hover": {
     backgroundColor: theme.palette.primary.main,
     transition: "background 0.3s",
   },
 }));
 
+const LinkStyled = styled(Link)`
+  display: block;
+  height: 100%;
+  width: 100%;
+  padding: 3px 10px;
+  text-align: center;
+`;
 export default IndexPage;
 
 // 1. category를 불러온다. -> todos.category -> 중복제거

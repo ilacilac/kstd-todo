@@ -11,6 +11,7 @@ type ModalProps = {
   todo: Todo;
   todos: Todo[];
   setTodosArray: Dispatch<SetStateAction<Todo[]>>;
+  setCategoriesArray: Dispatch<SetStateAction<string[]>>;
   categories: string[];
 };
 
@@ -21,6 +22,7 @@ const TodoModal: React.FC<ModalProps> = ({
   todos,
   setTodosArray,
   categories,
+  setCategoriesArray,
 }) => {
   const style = {
     position: "absolute",
@@ -59,6 +61,7 @@ const TodoModal: React.FC<ModalProps> = ({
           setTodosArray={setTodosArray}
           handleClose={handleClose}
           categories={categories}
+          setCategoriesArray={setCategoriesArray}
         />
       </Box>
     </Modal>

@@ -43,18 +43,12 @@ const TodosPage: React.FC<TodosProps> = ({ todos, categories }) => {
         <ArrowBackIcon />
       </BackBtn>
       <SectionStyled>
-        <TodoForm
-          setTodosArray={setTodosArray}
-          todos={todosArray}
-          categories={categoriesArray}
-          setCategoriesArray={setCategoriesArray}
-        ></TodoForm>
-
         <TodoList
           setTodosArray={setTodosArray}
           todos={todosArray}
           deleteTodo={deleteTodo}
           categories={categoriesArray}
+          setCategoriesArray={setCategoriesArray}
         />
       </SectionStyled>
     </BoxWrapStyled>
@@ -75,9 +69,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     filterTodos = todos.filter((todo) => todo.category === category);
     categories = new Set(todos.map((todo) => todo.category));
     uniqueCategories = [...categories];
-
-    console.log(todos);
-    console.log(uniqueCategories);
   } catch (error) {
     console.error(`readTodosFromFile Error : ${error}`);
   }
@@ -92,7 +83,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const SectionStyled = styled("section")`
   display: flex;
   flex-direction: column;
-  // justify-content: center;
   align-items: center;
   height: 100vh;
 `;

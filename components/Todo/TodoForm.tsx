@@ -41,7 +41,7 @@ const TodoForm: React.FC<TodoFormProps> = ({
   const today = dayjs().toDate();
   const tomorrow = dayjs().add(1, "day").toDate();
   const [task, setTask] = useState("");
-  const [category, setCategory] = useState("회사");
+  const [category, setCategory] = useState("");
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(tomorrow);
   const [priority, setPriority] = useState("상");
@@ -71,11 +71,9 @@ const TodoForm: React.FC<TodoFormProps> = ({
     setTodosArray([...todos, newTodo]);
     setCategoriesArray(uniqueCategories);
     setTask("");
+    setCategory("");
   };
 
-  useEffect(() => {
-    console.log(categories);
-  }, []);
   return (
     <TodoFormWrapStyled>
       <FormGroup>
@@ -103,14 +101,14 @@ const TodoForm: React.FC<TodoFormProps> = ({
         <CategoriesBox>
           {categories &&
             categories.map((category) => (
-              <Button
+              <CategoryButton
                 onClick={() => setCategory(category)}
                 variant="outlined"
                 size="small"
                 key={category}
               >
                 {category}
-              </Button>
+              </CategoryButton>
             ))}
         </CategoriesBox>
         <FormControl fullWidth sx={{ marginTop: "10px" }}>
@@ -229,8 +227,11 @@ const DateStyled = styled(DatePicker)`
 `;
 
 const CategoriesBox = styled(Box)`
-  margin-top: 10px;
+  margin: 10px 0;
   display: flex;
-  justify-content: flex-start;
+`;
+const CategoryButton = styled(Button)`
+  margin-right: 5px;
+  border-radius: 30px;
 `;
 export default TodoForm;
