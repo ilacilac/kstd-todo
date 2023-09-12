@@ -1,20 +1,17 @@
 import React, { useState } from "react";
 import { GetServerSideProps } from "next";
-import { v4 as uuidv4 } from "uuid";
-import { Box, Button, styled } from "@mui/material";
+import { Button, styled } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/router";
 import { resetServerContext } from "react-beautiful-dnd";
 import Head from "next/head";
-import dayjs from "dayjs";
 import TodoList from "../../components/Todo/TodoList";
 import {
-  createTodoToServer,
   deleteTodoFromServer,
   getTodosFromServer,
   updateTodosToServer,
 } from "../../service/todos";
-import { Status, Todo } from "../../types/todo";
+import { Todo } from "../../types/todo";
 
 type TodosProps = {
   todos: Todo[];
@@ -22,11 +19,7 @@ type TodosProps = {
   categories: string[];
 };
 
-const TodosPage: React.FC<TodosProps> = ({
-  todos,
-
-  categories,
-}) => {
+const TodosPage: React.FC<TodosProps> = ({ todos, categories }) => {
   const [todosArray, setTodosArray] = useState<Todo[]>(todos);
 
   const [categoriesArray, setCategoriesArray] = useState<string[]>(categories);
@@ -63,11 +56,11 @@ const TodosPage: React.FC<TodosProps> = ({
   };
 
   const router = useRouter();
-
+  const title = `KSTD | ${router.query.category} 할 일 목록`;
   return (
     <>
       <Head>
-        <title>KSTD | {router.query.category}할 일 목록</title>
+        <title>{title}</title>
       </Head>
       <BoxWrapStyled>
         <BackBtn
@@ -94,7 +87,6 @@ const TodosPage: React.FC<TodosProps> = ({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   let todos: Todo[] = [];
-  let filterTodos: Todo[] = [];
   const { category } = context.query;
   let categories;
   let uniqueCategories;
@@ -102,7 +94,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   resetServerContext();
   try {
     todos = await getTodosFromServer();
-    filterTodos = todos.filter((todo) => todo.category === category);
     categories = new Set(todos.map((todo) => todo.category));
     uniqueCategories = [...categories];
   } catch (error) {

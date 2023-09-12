@@ -22,12 +22,14 @@ type IndexProps = {
 };
 
 const IndexPage: React.FC<IndexProps> = ({ todos }) => {
+  // TODO : state -> ContextAPI ...
   const [todosArray, setTodosArray] = useState<Todo[]>(todos);
   const categories = new Set(todos.map((todo) => todo.category));
   const uniqueCategories = [...categories];
   const [categoriesArray, setCategoriesArray] =
     useState<string[]>(uniqueCategories);
 
+  // TODO : Custom hook
   const deleteTodo = async (id: string) => {
     await deleteTodoFromServer(id);
     const newTodos = await getTodosFromServer();
