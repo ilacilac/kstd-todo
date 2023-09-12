@@ -1,9 +1,11 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { Priority } from "types/todo";
+import config from "config/config";
 
 type CategoryTextFieldProps = {
-  priority: string;
-  setPriority: Dispatch<SetStateAction<string>>;
+  priority: Priority;
+  setPriority: Dispatch<SetStateAction<Priority>>;
 };
 
 const PrioritySelect: React.FC<CategoryTextFieldProps> = ({
@@ -18,11 +20,13 @@ const PrioritySelect: React.FC<CategoryTextFieldProps> = ({
         id="priority"
         value={priority}
         label="우선순위"
-        onChange={(e) => setPriority(e.target.value)}
+        onChange={(e) => setPriority(e.target.value as Priority)}
       >
-        <MenuItem value={"상"}>상</MenuItem>
-        <MenuItem value={"중"}>중</MenuItem>
-        <MenuItem value={"하"}>하</MenuItem>
+        {config.priority.map((priority) => (
+          <MenuItem value={priority} key={priority}>
+            {priority}
+          </MenuItem>
+        ))}
       </Select>
     </FormControl>
   );

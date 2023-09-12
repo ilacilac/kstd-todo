@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Status } from "types/todo";
+import config from "config/config";
 
 type CategoryTextFieldProps = {
   status: Status;
@@ -28,9 +29,11 @@ const StatusSelect: React.FC<CategoryTextFieldProps> = ({
           label="현재상태"
           onChange={(e) => setStatus(e.target.value as Status)}
         >
-          <MenuItem value={"대기중"}>대기중</MenuItem>
-          <MenuItem value={"진행중"}>진행중</MenuItem>
-          <MenuItem value={"완료"}>완료</MenuItem>
+          {config.status.map((status) => (
+            <MenuItem value={status} key={status}>
+              {status}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
     </Box>

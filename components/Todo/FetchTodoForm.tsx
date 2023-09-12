@@ -16,7 +16,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { ko } from "date-fns/locale";
 import Select from "@mui/material/Select";
 
-import { Status, Todo } from "../../types/todo";
+import { Priority, Status, Todo } from "../../types/todo";
 import TaskTextField from "components/Common/TaskTextField";
 import CategoryTextField from "components/Common/CategoryTextField";
 import PrioritySelect from "components/Common/PrioritySelect";
