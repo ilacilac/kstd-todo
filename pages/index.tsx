@@ -98,7 +98,7 @@ const ListStyled = styled(List)`
   align-items: center;
   justify-content: center;
   flex-direction: row;
-
+  margin-top: 20px;
   overflow-x: scroll;
 `;
 
@@ -126,7 +126,3 @@ const LinkStyled = styled(Link)`
   text-align: center;
 `;
 export default IndexPage;
-
-// 1. category를 불러온다. -> todos.category -> 중복제거
-// 2. category 선택해주세요.
-// 3.
