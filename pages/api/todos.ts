@@ -22,4 +22,9 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
     writeTodosToFile(todos);
     return res.status(201).json(newTodo);
   }
+
+  if (req.method === "PUT") {
+    writeTodosToFile(req.body);
+    return res.status(201).json(req.body);
+  }
 };
