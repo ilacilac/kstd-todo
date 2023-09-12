@@ -125,6 +125,7 @@ const TodoForm: React.FC<TodoFormProps> = ({
                   setEndDate(date);
                 }}
                 minDate={startDate}
+                dateFormat="yyyy-MM-dd"
               />
             </EndDateStyled>
           </EndDateWrapStyled>
