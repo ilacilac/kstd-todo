@@ -44,13 +44,13 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
     handleOpen();
   };
 
-  const handleCheckbox = async (id: string) => {
-    const newTodos = todos.map((_todo) =>
-      _todo.id === id ? { ..._todo, isDone: !_todo.isDone } : _todo
-    );
-    setTodosArray(newTodos);
-    updateTodosToServer(newTodos);
-  };
+  // const handleStatus = async (id: string) => {
+  //   const newTodos = todos.map((_todo) =>
+  //     _todo.id === id ? { ..._todo, status: !_todo.status } : _todo
+  //   );
+  //   setTodosArray(newTodos);
+  //   updateTodosToServer(newTodos);
+  // };
   return (
     <>
       <Draggable draggableId={todo.id} index={index}>
@@ -63,14 +63,14 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
             <Box
               sx={{ display: "flex", alignItems: "center", maxWidth: "90%" }}
             >
-              <Checkbox
-                aria-label={todo.isDone ? "완료" : "미완료"}
-                checked={todo.isDone}
+              {/* <Checkbox
+                aria-label={todo.status ? "완료" : "미완료"}
+                checked={todo.status}
                 onChange={() => handleCheckbox(todo.id)}
-              />
+              /> */}
               <Typography
                 sx={
-                  todo.isDone
+                  todo.status === "완료"
                     ? {
                         textDecoration: "line-through",
                         color: "#999",
@@ -94,22 +94,35 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
                 {dayjs(todo.endDate).format("YYYY/MM/DD")})
               </Typography>
             </Box>
-            <Box>
+            <EditBox>
+              <StatusBox
+                sx={
+                  todo.status === "대기중"
+                    ? { background: "#ffc6c6" }
+                    : todo.status === "진행중"
+                    ? { background: "#ffffc6" }
+                    : todo.status === "완료"
+                    ? { background: "#d8ffc6" }
+                    : {}
+                }
+              >
+                <StatusText>{todo.status}</StatusText>
+              </StatusBox>
               <Button
                 sx={buttonCommonStyle}
                 onClick={() => onClick()}
                 title="수정하기 모달창이 열립니다."
               >
-                <EditIcon />
+                <EditIcon fontSize="small" />
               </Button>
               <Button
                 sx={buttonCommonStyle}
                 onClick={() => deleteTodo(todo.id)}
                 title="삭제하기"
               >
-                <DeleteIcon />
+                <DeleteIcon fontSize="small" />
               </Button>
-            </Box>
+            </EditBox>
           </ListItemStyle>
         )}
       </Draggable>
@@ -128,6 +141,20 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
   );
 };
 
+const StatusBox = styled(Box)`
+  align-items: center;
+  color: #333;
+  padding: 2px 5px;
+  margin-right: 5px;
+  border-radius: 5px;
+`;
+const EditBox = styled(Box)`
+  display: flex;
+  align-items: center;
+`;
+const StatusText = styled(Typography)`
+  font-size: 12px;
+`;
 const ListItemStyle = styled(ListItem)`
   display: flex;
   justify-content: space-between;

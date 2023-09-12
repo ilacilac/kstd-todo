@@ -6,7 +6,7 @@
     "startDate": "2023-06-01T06:30:34.000Z",
     "endDate": "2023-09-06T06:30:34.000Z",
     "priority": "상",
-    "isDone": true
+    "status": "완료"
   },
   {
     "id": "61c3e77b-d721-44e0-bbe5-930e3c9aa14d",
@@ -15,6 +15,6 @@
     "startDate": "2023-09-06T14:02:12.000Z",
     "endDate": "2023-09-13T14:02:12.000Z",
     "priority": "상",
-    "isDone": false
+    "status": "진행중"
   }
 ]

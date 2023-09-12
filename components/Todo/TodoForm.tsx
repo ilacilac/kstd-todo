@@ -20,7 +20,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 
 import { createTodoToServer } from "service/todos";
 import { v4 as uuidv4 } from "uuid";
-import { Todo } from "../../types/todo";
+import { Status, Todo } from "../../types/todo";
 
 import dayjs from "dayjs";
 import DatePicker from "react-datepicker";
@@ -38,7 +38,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodosArray }) => {
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(tomorrow);
   const [priority, setPriority] = useState("상");
-  const [isDone, setIsDone] = useState(false);
+  const [status, setStatus] = useState<Status>("대기중");
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -50,17 +50,17 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodosArray }) => {
       startDate,
       endDate,
       priority,
-      isDone,
+      status,
     };
 
     if (!task) {
       alert("할 일을 모두 입력해주세요.");
       return false;
     }
-    await createTodoToServer(newTodo).then(() => {
-      setTodosArray([...todos, newTodo]);
-      setTask("");
-    });
+    await createTodoToServer(newTodo);
+
+    setTodosArray([...todos, newTodo]);
+    setTask("");
   };
 
   useEffect(() => {

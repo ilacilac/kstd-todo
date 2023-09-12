@@ -1,3 +1,4 @@
+export type Status = "대기중" | "진행중" | "완료";
 export type Todo = {
   id: string;
   category: string;
@@ -5,5 +6,5 @@ export type Todo = {
   startDate: Date;
   endDate: Date;
   priority: string;
-  isDone: boolean;
+  status: Status;
 };

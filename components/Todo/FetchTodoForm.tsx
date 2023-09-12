@@ -26,7 +26,7 @@ import dayjs from "dayjs";
 import DatePicker from "react-datepicker";
 import { createTodoToServer, updateTodosToServer } from "service/todos";
 import { v4 as uuidv4 } from "uuid";
-import { Todo } from "../../types/todo";
+import { Status, Todo } from "../../types/todo";
 import { parseISO, format } from "date-fns";
 
 type TodoFormProps = {
@@ -47,7 +47,7 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
   const [startDate, setStartDate] = useState(new Date(todo.startDate));
   const [endDate, setEndDate] = useState(new Date(todo.endDate));
   const [priority, setPriority] = useState(todo.priority);
-  const [isDone, setIsDone] = useState(todo.isDone);
+  const [status, setStatus] = useState(todo.status);
   useEffect(() => {
     console.log(startDate, endDate);
     console.log(new Date(startDate), endDate);
@@ -66,7 +66,7 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
             startDate,
             endDate,
             priority,
-            isDone,
+            status,
           }
         : _todo
     );
@@ -124,12 +124,21 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
           alignItems: "center",
         }}
       >
-        <Typography>완료여부</Typography>
-        <Checkbox
-          aria-label="완료"
-          checked={isDone}
-          onChange={(e) => setIsDone(e.target.checked)}
-        />
+        <FormControl fullWidth sx={{ marginTop: "10px" }}>
+          <InputLabel id="status-label">현재상태</InputLabel>
+
+          <Select
+            labelId="status"
+            id="status"
+            value={status}
+            label="현재상태"
+            onChange={(e) => setStatus(e.target.value as Status)}
+          >
+            <MenuItem value={"대기중"}>대기중</MenuItem>
+            <MenuItem value={"진행중"}>진행중</MenuItem>
+            <MenuItem value={"완료"}>완료</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
 
       <DateWrapStyled>
