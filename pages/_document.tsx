@@ -1,12 +1,11 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
+
 import React from "react";
 
 const TodoDocument = () => {
   return (
     <Html lang="ko">
-      <Head>
-        <title>KSTD | Todo</title>
-      </Head>
+      <Head />
       <body>
         <Main />
         <NextScript />

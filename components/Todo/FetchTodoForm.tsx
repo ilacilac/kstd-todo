@@ -34,6 +34,7 @@ type TodoFormProps = {
   todos: Todo[];
   handleClose: () => void;
   setTodosArray: Dispatch<SetStateAction<Todo[]>>;
+  categories: string[];
 };
 
 const FetchTodoForm: React.FC<TodoFormProps> = ({
@@ -41,6 +42,7 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
   todos,
   setTodosArray,
   handleClose,
+  categories,
 }) => {
   const [task, setTask] = useState(todo.task);
   const [category, setCategory] = useState(todo.category);
@@ -48,10 +50,7 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
   const [endDate, setEndDate] = useState(new Date(todo.endDate));
   const [priority, setPriority] = useState(todo.priority);
   const [status, setStatus] = useState(todo.status);
-  useEffect(() => {
-    console.log(startDate, endDate);
-    console.log(new Date(startDate), endDate);
-  }, []);
+
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     // 1. todos를 전역 state에 저장 -> re render
@@ -70,6 +69,7 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
           }
         : _todo
     );
+    console.log(newTodos);
     updateTodosToServer(newTodos);
     setTodosArray(newTodos);
     handleClose();
@@ -87,22 +87,30 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
           label="할일"
         />
       </FormControl>
+
       <FormControl fullWidth sx={{ marginTop: "10px" }}>
-        <InputLabel id="category-label">카테고리</InputLabel>
-        <Select
-          labelId="category"
-          id="category"
+        <TextField
           value={category}
-          label="카테고리"
           onChange={(e) => setCategory(e.target.value)}
-        >
-          <MenuItem value={"회사"}>회사</MenuItem>
-          <MenuItem value={"공부"}>공부</MenuItem>
-          <MenuItem value={"운동"}>운동</MenuItem>
-          <MenuItem value={"취미"}>취미</MenuItem>
-          <MenuItem value={"기타"}>기타</MenuItem>
-        </Select>
+          // placeholder="내용을 입력해주세요."
+          required
+          id="category"
+          label="카테고리"
+        />
       </FormControl>
+      <CategoriesBox>
+        {categories &&
+          categories.map((category) => (
+            <Button
+              onClick={() => setCategory(category)}
+              variant="outlined"
+              size="small"
+              key={category}
+            >
+              {category}
+            </Button>
+          ))}
+      </CategoriesBox>
       <FormControl fullWidth sx={{ marginTop: "10px" }}>
         <InputLabel id="priority-label">우선순위</InputLabel>
 
@@ -184,6 +192,10 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
   );
 };
 
+const CategoriesBox = styled(Box)`
+  margin-top: 10px;
+  display: flex;
+`;
 const DateWrapStyled = styled(Box)`
   display: flex;
   justify-content: space-between;

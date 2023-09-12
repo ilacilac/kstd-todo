@@ -2,6 +2,15 @@
   {
     "id": "ecc93032-75e8-493f-a37a-0e9838fc89b1",
     "task": "타입스크립트 공부하기",
+    "category": "공부",
+    "startDate": "2023-06-01T06:30:34.000Z",
+    "endDate": "2023-09-06T06:30:34.000Z",
+    "priority": "상",
+    "status": "완료"
+  },
+  {
+    "id": "ecc93032-75e8-493f-a37a-0e9838fc89b1a",
+    "task": "타입스크립트 공부하기",
     "category": "기타",
     "startDate": "2023-06-01T06:30:34.000Z",
     "endDate": "2023-09-06T06:30:34.000Z",
@@ -9,12 +18,12 @@
     "status": "완료"
   },
   {
-    "id": "61c3e77b-d721-44e0-bbe5-930e3c9aa14d",
-    "task": "과제 제출하기",
-    "category": "회사",
-    "startDate": "2023-09-06T14:02:12.000Z",
-    "endDate": "2023-09-13T14:02:12.000Z",
+    "id": "ad717acd-4e6e-4b72-afcd-3b271412c63c",
+    "task": "dd",
+    "category": "공부",
+    "startDate": "2023-09-12T08:24:55.146Z",
+    "endDate": "2023-09-13T08:24:55.146Z",
     "priority": "상",
-    "status": "진행중"
+    "status": "대기중"
   }
 ]

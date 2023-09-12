@@ -23,6 +23,7 @@ type TodoListItemProps = {
   index: number;
   deleteTodo: (id: string) => void;
   setTodosArray: Dispatch<SetStateAction<Todo[]>>;
+  categories: string[];
 };
 
 const TodoListItem: React.FC<TodoListItemProps> = ({
@@ -31,6 +32,7 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
   index,
   deleteTodo,
   setTodosArray,
+  categories,
 }) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
@@ -134,6 +136,7 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
             todo={todo}
             todos={todos}
             setTodosArray={setTodosArray}
+            categories={categories}
           />
         </ModalPortal>
       )}
@@ -161,7 +164,7 @@ const ListItemStyle = styled(ListItem)`
   border: 1px solid #dddddd;
   border-radius: 5px;
   margin-top: 10px;
-  &:first-child {
+  &:first-of-type {
     margin-top: 0;
   }
 `;

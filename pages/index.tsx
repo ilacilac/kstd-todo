@@ -16,8 +16,9 @@ import {
   DropResult,
   resetServerContext,
 } from "react-beautiful-dnd";
-import { Box, styled } from "@mui/material";
+import { Box, List, ListItem, styled } from "@mui/material";
 import Head from "next/head";
+import Link from "next/link";
 
 type IndexProps = {
   todos: Todo[];
@@ -25,6 +26,10 @@ type IndexProps = {
 
 const IndexPage: React.FC<IndexProps> = ({ todos }) => {
   const [todosArray, setTodosArray] = useState<Todo[]>(todos);
+  const categories = new Set(todos.map((todo) => todo.category));
+  const uniqueCategories = [...categories];
+  const [categoriesArray, setCategoriesArray] =
+    useState<string[]>(uniqueCategories);
   const deleteTodo = async (id: string) => {
     // const todos = todosArray.filter((todo) => todo.id !== id);
     await deleteTodoFromServer(id);
@@ -32,53 +37,22 @@ const IndexPage: React.FC<IndexProps> = ({ todos }) => {
     setTodosArray(newTodos);
   };
 
-  // 드래그가 끝났을 때의 동작을 지정해주는 함수
-  const onDragEnd = (result: DropResult) => {
-    const { source, destination } = result;
-
-    // 드롭이 droppable 밖에서 일어났을 경우 바로 return
-    if (!destination) return;
-    // 드래그가 발생한 위치와 드롭이 발생한 위치가 같을 경우 바로 return
-    if (
-      source.droppableId === destination.droppableId &&
-      source.index === destination.index
-    )
-      return;
-
-    let add: Todo;
-    let newTodos = todosArray;
-
-    add = newTodos[source.index];
-
-    // 드래그가 발생한 아이템을 add에 담고 원래 자리에서 제거
-    if (source.droppableId === "inbox-column") {
-      add = newTodos[source.index];
-      newTodos.splice(source.index, 1);
-    }
-
-    // 드롭이 발생한 곳에 add를 넣어줌
-    if (destination.droppableId === "inbox-column") {
-      newTodos.splice(destination.index, 0, { ...add });
-    }
-
-    // todos와 completed 업데이트
-    setTodosArray(newTodos);
-
-    updateTodosToServer(newTodos);
-  };
-
+  console.log(uniqueCategories);
   return (
     <BoxWrapStyled>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <SectionStyled>
-          <TodoForm setTodosArray={setTodosArray} todos={todosArray}></TodoForm>
-          <TodoList
-            setTodosArray={setTodosArray}
-            todos={todosArray}
-            deleteTodo={deleteTodo}
-          />
-        </SectionStyled>
-      </DragDropContext>
+      <ListStyled>
+        {uniqueCategories.map((category) => (
+          <ListItemStyled key={category}>
+            <LinkStyled href={`/todos/${category}`}>{category}</LinkStyled>
+          </ListItemStyled>
+        ))}
+      </ListStyled>
+      <TodoList
+        todos={todosArray}
+        setTodosArray={setTodosArray}
+        deleteTodo={deleteTodo}
+        categories={categoriesArray}
+      />
       <div id="modal-root"></div>
     </BoxWrapStyled>
   );
@@ -101,18 +75,45 @@ export const getServerSideProps: GetServerSideProps = async () => {
   };
 };
 
-const SectionStyled = styled("section")`
-  display: flex;
-  flex-direction: column;
-  // justify-content: center;
-  align-items: center;
-  height: 100vh;
-`;
 const BoxWrapStyled = styled("div")`
   margin: 0;
   padding: 0;
-
+  display: flex;
+  align-items: center;
+  flex-direction: column;
   width: 100%;
 `;
+const ListStyled = styled(List)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+`;
+const LinkStyled = styled(Link)`
+  display: block;
+  height: 100%;
+  width: 100%;
+  padding: 5px 15px;
+  text-align: center;
+`;
+const ListItemStyled = styled(ListItem)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  border: "2px solid",
+  borderRadius: "5px",
+  margin: "20px",
+
+  fontSize: "18px",
+  borderColor: theme.palette.primary.main, // var(--mui-palette-primary-main)
+  "&:hover": {
+    backgroundColor: theme.palette.primary.main,
+    transition: "background 0.3s",
+  },
+}));
 
 export default IndexPage;
+
+// 1. category를 불러온다. -> todos.category -> 중복제거
+// 2. category 선택해주세요.
+// 3.

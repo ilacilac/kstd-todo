@@ -28,9 +28,16 @@ import DatePicker from "react-datepicker";
 type TodoFormProps = {
   todos: Todo[];
   setTodosArray: Dispatch<SetStateAction<Todo[]>>;
+  setCategoriesArray: Dispatch<SetStateAction<string[]>>;
+  categories: string[];
 };
 
-const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodosArray }) => {
+const TodoForm: React.FC<TodoFormProps> = ({
+  setTodosArray,
+  setCategoriesArray,
+  todos,
+  categories,
+}) => {
   const today = dayjs().toDate();
   const tomorrow = dayjs().add(1, "day").toDate();
   const [task, setTask] = useState("");
@@ -40,6 +47,8 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodosArray }) => {
   const [priority, setPriority] = useState("상");
   const [status, setStatus] = useState<Status>("대기중");
 
+  const newCategories = new Set(categories.concat(category));
+  const uniqueCategories = [...newCategories];
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
 
@@ -60,11 +69,12 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodosArray }) => {
     await createTodoToServer(newTodo);
 
     setTodosArray([...todos, newTodo]);
+    setCategoriesArray(uniqueCategories);
     setTask("");
   };
 
   useEffect(() => {
-    console.log(startDate, endDate);
+    console.log(categories);
   }, []);
   return (
     <TodoFormWrapStyled>
@@ -81,21 +91,28 @@ const TodoForm: React.FC<TodoFormProps> = ({ todos, setTodosArray }) => {
           />
         </FormControl>
         <FormControl fullWidth sx={{ marginTop: "10px" }}>
-          <InputLabel id="category-label">카테고리</InputLabel>
-          <Select
-            labelId="category-label"
-            id="category"
+          <TextField
             value={category}
-            label="category"
             onChange={(e) => setCategory(e.target.value)}
-          >
-            <MenuItem value={"회사"}>회사</MenuItem>
-            <MenuItem value={"공부"}>공부</MenuItem>
-            <MenuItem value={"운동"}>운동</MenuItem>
-            <MenuItem value={"취미"}>취미</MenuItem>
-            <MenuItem value={"기타"}>기타</MenuItem>
-          </Select>
+            // placeholder="내용을 입력해주세요."
+            required
+            id="category"
+            label="카테고리"
+          />
         </FormControl>
+        <CategoriesBox>
+          {categories &&
+            categories.map((category) => (
+              <Button
+                onClick={() => setCategory(category)}
+                variant="outlined"
+                size="small"
+                key={category}
+              >
+                {category}
+              </Button>
+            ))}
+        </CategoriesBox>
         <FormControl fullWidth sx={{ marginTop: "10px" }}>
           <InputLabel id="priority-label">우선순위</InputLabel>
           <Select
@@ -211,4 +228,9 @@ const DateStyled = styled(DatePicker)`
   background-color: transparent;
 `;
 
+const CategoriesBox = styled(Box)`
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+`;
 export default TodoForm;
