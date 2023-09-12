@@ -8,7 +8,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <Head>
-        <title>KSTD | Todo</title>
+        <title>KSTD | 전체 할 일 목록</title>
       </Head>
       <HeaderStyled>
         <TitleWrapStyled variant="h1">

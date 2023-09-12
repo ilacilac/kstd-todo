@@ -27,7 +27,7 @@ type TodoListItemProps = {
   categories: string[];
 };
 
-const TodoListItem: React.FC<TodoListItemProps> = ({
+const TodoDragableListItem: React.FC<TodoListItemProps> = ({
   todo,
   todos,
   index,
@@ -57,70 +57,79 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
   // };
   return (
     <>
-      <ListItemStyle>
-        <Box sx={{ display: "flex", alignItems: "center", maxWidth: "90%" }}>
-          {/* <Checkbox
+      <Draggable draggableId={todo.id} index={index}>
+        {(provided) => (
+          <ListItemStyle
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+          >
+            <Box
+              sx={{ display: "flex", alignItems: "center", maxWidth: "90%" }}
+            >
+              {/* <Checkbox
                 aria-label={todo.status ? "완료" : "미완료"}
                 checked={todo.status}
                 onChange={() => handleCheckbox(todo.id)}
               /> */}
-          <Typography
-            sx={
-              todo.status === "완료"
-                ? {
-                    textDecoration: "line-through",
-                    color: "#999",
-                  }
-                : {
-                    fontWeight: "bold",
-                    color: "#333",
-                  }
-            }
-          >
-            {todo.task}
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: 12,
-              color: "#999999",
-              marginLeft: "5px",
-            }}
-          >
-            ({dayjs(todo.startDate).format("YYYY/MM/DD")} ~{" "}
-            {dayjs(todo.endDate).format("YYYY/MM/DD")})
-          </Typography>
-        </Box>
-        <EditBox>
-          <StatusBox
-            sx={
-              todo.status === "대기중"
-                ? { background: "#ffc6c6" }
-                : todo.status === "진행중"
-                ? { background: "#ffffc6" }
-                : todo.status === "완료"
-                ? { background: "#d8ffc6" }
-                : {}
-            }
-          >
-            <StatusText>{todo.status}</StatusText>
-          </StatusBox>
-          <Button
-            sx={buttonCommonStyle}
-            onClick={() => onClick()}
-            title="수정하기 모달창이 열립니다."
-          >
-            <EditIcon fontSize="small" />
-          </Button>
-          <Button
-            sx={buttonCommonStyle}
-            onClick={() => deleteTodo(todo.id)}
-            title="삭제하기"
-          >
-            <DeleteIcon fontSize="small" />
-          </Button>
-        </EditBox>
-      </ListItemStyle>
-
+              <Typography
+                sx={
+                  todo.status === "완료"
+                    ? {
+                        textDecoration: "line-through",
+                        color: "#999",
+                      }
+                    : {
+                        fontWeight: "bold",
+                        color: "#333",
+                      }
+                }
+              >
+                {todo.task}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: 12,
+                  color: "#999999",
+                  marginLeft: "5px",
+                }}
+              >
+                ({dayjs(todo.startDate).format("YYYY/MM/DD")} ~{" "}
+                {dayjs(todo.endDate).format("YYYY/MM/DD")})
+              </Typography>
+            </Box>
+            <EditBox>
+              <StatusBox
+                sx={
+                  todo.status === "대기중"
+                    ? { background: "#ffc6c6" }
+                    : todo.status === "진행중"
+                    ? { background: "#ffffc6" }
+                    : todo.status === "완료"
+                    ? { background: "#d8ffc6" }
+                    : {}
+                }
+              >
+                <StatusText>{todo.status}</StatusText>
+              </StatusBox>
+              <Button
+                sx={buttonCommonStyle}
+                onClick={() => onClick()}
+                title="수정하기 모달창이 열립니다."
+              >
+                <EditIcon fontSize="small" />
+              </Button>
+              <Button
+                sx={buttonCommonStyle}
+                onClick={() => deleteTodo(todo.id)}
+                title="삭제하기"
+              >
+                <DeleteIcon fontSize="small" />
+              </Button>
+            </EditBox>
+          </ListItemStyle>
+        )}
+      </Draggable>
       {open && (
         <ModalPortal>
           <TodoModal
@@ -167,4 +176,4 @@ const buttonCommonStyle = {
   // padding: 0,
   minWidth: "auto",
 };
-export default TodoListItem;
+export default TodoDragableListItem;

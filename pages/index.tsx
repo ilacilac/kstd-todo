@@ -19,6 +19,7 @@ import {
 import { Box, List, ListItem, styled } from "@mui/material";
 import Head from "next/head";
 import Link from "next/link";
+import TodoDragableList from "components/Todo/TodoDragableList";
 
 type IndexProps = {
   todos: Todo[];
@@ -56,7 +57,7 @@ const IndexPage: React.FC<IndexProps> = ({ todos }) => {
         categories={categoriesArray}
         setCategoriesArray={setCategoriesArray}
       ></TodoForm>
-      <TodoList
+      <TodoDragableList
         todos={todosArray}
         setTodosArray={setTodosArray}
         deleteTodo={deleteTodo}

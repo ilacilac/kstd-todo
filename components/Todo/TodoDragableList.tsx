@@ -12,6 +12,7 @@ import { styled } from "@mui/system";
 // import { useRouter } from "next/router";
 import { updateTodosToServer } from "service/todos";
 import { useRouter } from "next/router";
+import TodoDragableListItem from "./TodoDragableListItem";
 
 type TodoListProps = {
   todos: Todo[];
@@ -21,7 +22,7 @@ type TodoListProps = {
   categories: string[];
 };
 
-const TodoList: React.FC<TodoListProps> = ({
+const TodoDragableList: React.FC<TodoListProps> = ({
   todos,
   setTodosArray,
   deleteTodo,
@@ -66,49 +67,33 @@ const TodoList: React.FC<TodoListProps> = ({
 
   return (
     <TodoListWrapStyled>
-      <Box sx={{ margin: 0, padding: 0 }}>
-        {!category && (
-          <List sx={{ margin: 0, padding: 0 }}>
-            {todos.map((todo, index) => (
-              <TodoListItem
-                key={todo.id}
-                index={index}
-                todo={todo}
-                todos={todos}
-                deleteTodo={deleteTodo}
-                setTodosArray={setTodosArray}
-                categories={categories}
-                setCategoriesArray={setCategoriesArray}
-              />
-            ))}
-          </List>
-        )}
-        {category && (
-          <List sx={{ margin: 0, padding: 0 }}>
-            {todos &&
-              todos.map((todo, index) =>
-                todo.category === category ? (
-                  <TodoListItem
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="inbox-column">
+          {(provided) => (
+            <Box
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              sx={{ margin: 0, padding: 0 }}
+            >
+              <List sx={{ margin: 0, padding: 0 }}>
+                {todos.map((todo, index) => (
+                  <TodoDragableListItem
                     key={todo.id}
                     index={index}
                     todo={todo}
                     todos={todos}
                     deleteTodo={deleteTodo}
                     setTodosArray={setTodosArray}
-                    setCategoriesArray={setCategoriesArray}
                     categories={categories}
+                    setCategoriesArray={setCategoriesArray}
                   />
-                ) : (
-                  ""
-                )
-              )}
-            {!todos && <NoTaskBox>등록된 항목이 없습니다.</NoTaskBox>}
-            {!todos.map((todo, index) => todo.category === category).length && (
-              <NoTaskBox>등록된 항목이 없습니다.</NoTaskBox>
-            )}
-          </List>
-        )}
-      </Box>
+                ))}
+                {provided.placeholder}
+              </List>
+            </Box>
+          )}
+        </Droppable>
+      </DragDropContext>
     </TodoListWrapStyled>
   );
 };
@@ -129,4 +114,4 @@ const NoTaskBox = styled(Box)`
   font-size: 14px;
 `;
 
-export default TodoList;
+export default TodoDragableList;

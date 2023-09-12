@@ -16,6 +16,7 @@ import { Box, Button, styled } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/router";
 import { resetServerContext } from "react-beautiful-dnd";
+import Head from "next/head";
 
 type TodosProps = {
   todos: Todo[];
@@ -33,25 +34,31 @@ const TodosPage: React.FC<TodosProps> = ({ todos, categories }) => {
   };
 
   const router = useRouter();
+
   return (
-    <BoxWrapStyled>
-      <BackBtn
-        onClick={() => {
-          router.back();
-        }}
-      >
-        <ArrowBackIcon />
-      </BackBtn>
-      <SectionStyled>
-        <TodoList
-          setTodosArray={setTodosArray}
-          todos={todosArray}
-          deleteTodo={deleteTodo}
-          categories={categoriesArray}
-          setCategoriesArray={setCategoriesArray}
-        />
-      </SectionStyled>
-    </BoxWrapStyled>
+    <>
+      <Head>
+        <title>KSTD | {router.query.category}목록</title>
+      </Head>
+      <BoxWrapStyled>
+        <BackBtn
+          onClick={() => {
+            router.back();
+          }}
+        >
+          <ArrowBackIcon />
+        </BackBtn>
+        <SectionStyled>
+          <TodoList
+            setTodosArray={setTodosArray}
+            todos={todosArray}
+            deleteTodo={deleteTodo}
+            categories={categoriesArray}
+            setCategoriesArray={setCategoriesArray}
+          />
+        </SectionStyled>
+      </BoxWrapStyled>
+    </>
   );
 };
 
