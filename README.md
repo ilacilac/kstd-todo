@@ -15,45 +15,51 @@ $ npm run dev
 ## 프로젝트 폴더 스트럭쳐
 
 ```
-├── README.MD
+── README.MD
 ├── components
-│ ├── Modal
-│ │ ├── ModalPortal.tsx
-│ │ └── TodoModal.tsx
-│ └── Todo
-│ ├── FetchTodoForm.tsx
-│ ├── TodoDragableList.tsx
-│ ├── TodoDragableListItem.tsx
-│ ├── TodoForm.tsx
-│ ├── TodoList.tsx
-│ └── TodoListItem.tsx
+│   ├── Common
+│   │   ├── CategoryTextField.tsx
+│   │   ├── DateField.tsx
+│   │   ├── PrioritySelect.tsx
+│   │   ├── StatusSelect.tsx
+│   │   └── TaskTextField.tsx
+│   ├── Modal
+│   │   ├── ModalPortal.tsx
+│   │   └── TodoModal.tsx
+│   └── Todo
+│       ├── FetchTodoForm.tsx
+│       ├── TodoDragableList.tsx
+│       ├── TodoDragableListItem.tsx
+│       ├── TodoForm.tsx
+│       ├── TodoList.tsx
+│       └── TodoListItem.tsx
 ├── config
-│ └── config.ts
+│   └── config.ts
 ├── data
-│ └── todos.json
+│   └── todos.json
 ├── lib
-│ └── fileHandler.ts
+│   └── fileHandler.ts
 ├── next-env.d.ts
 ├── next.config.js
 ├── package-lock.json
 ├── package.json
 ├── pages
-│ ├── \_app.tsx
-│ ├── \_document.tsx
-│ ├── api
-│ │ ├── todo
-│ │ │ └── [id].ts
-│ │ └── todos.ts
-│ ├── index.tsx
-│ └── todos
-│ └── [category].tsx
+│   ├── _app.tsx
+│   ├── _document.tsx
+│   ├── api
+│   │   ├── todo
+│   │   │   └── [id].ts
+│   │   └── todos.ts
+│   ├── index.tsx
+│   └── todos
+│       └── [category].tsx
 ├── service
-│ └── todos.ts
+│   └── todos.ts
 ├── styles
-│ └── global.css
+│   └── global.css
 ├── tsconfig.json
 └── types
-└── todo.d.ts : todo 데이터 타입
+    └── todo.d.ts
 ```
 
 1. SSR / File Logic
