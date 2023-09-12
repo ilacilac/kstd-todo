@@ -62,8 +62,8 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
               marginLeft: "5px",
             }}
           >
-            ({dayjs(todo.startDate).format("YYYY/MM/DD")} ~{" "}
-            {dayjs(todo.endDate).format("YYYY/MM/DD")})
+            ({dayjs(todo.startDate).format("YYYY-MM-DD")} ~{" "}
+            {dayjs(todo.endDate).format("YYYY-MM-DD")})
           </Typography>
         </Box>
         <EditBox>
@@ -140,7 +140,6 @@ const ListItemStyle = styled(ListItem)`
 `;
 
 const buttonCommonStyle = {
-  // padding: 0,
   minWidth: "auto",
 };
 export default TodoListItem;

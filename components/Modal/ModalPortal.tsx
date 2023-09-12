@@ -7,7 +7,6 @@ const ModalPortal = ({ children }: { children: ReactElement }) => {
     setMounted(true);
     return () => setMounted(false);
   }, []);
-  // if (typeof window === "undefined") return <></>;
 
   return mounted ? (
     createPortal(children, document.getElementById("modal-root") as HTMLElement)

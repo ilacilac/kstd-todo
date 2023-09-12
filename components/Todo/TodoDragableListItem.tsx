@@ -39,13 +39,6 @@ const TodoDragableListItem: React.FC<TodoListItemProps> = ({
     handleOpen();
   };
 
-  // const handleStatus = async (id: string) => {
-  //   const newTodos = todos.map((_todo) =>
-  //     _todo.id === id ? { ..._todo, status: !_todo.status } : _todo
-  //   );
-  //   setTodosArray(newTodos);
-  //   updateTodosToServer(newTodos);
-  // };
   return (
     <>
       <Draggable draggableId={todo.id} index={index}>
@@ -58,11 +51,6 @@ const TodoDragableListItem: React.FC<TodoListItemProps> = ({
             <Box
               sx={{ display: "flex", alignItems: "center", maxWidth: "90%" }}
             >
-              {/* <Checkbox
-                aria-label={todo.status ? "완료" : "미완료"}
-                checked={todo.status}
-                onChange={() => handleCheckbox(todo.id)}
-              /> */}
               <Typography
                 sx={
                   todo.status === "완료"
@@ -85,8 +73,8 @@ const TodoDragableListItem: React.FC<TodoListItemProps> = ({
                   marginLeft: "5px",
                 }}
               >
-                ({dayjs(todo.startDate).format("YYYY/MM/DD")} ~{" "}
-                {dayjs(todo.endDate).format("YYYY/MM/DD")})
+                ({dayjs(todo.startDate).format("YYYY-MM-DD")} ~{" "}
+                {dayjs(todo.endDate).format("YYYY-MM-DD")})
               </Typography>
             </Box>
             <EditBox>
@@ -164,7 +152,6 @@ const ListItemStyle = styled(ListItem)`
 `;
 
 const buttonCommonStyle = {
-  // padding: 0,
   minWidth: "auto",
 };
 export default TodoDragableListItem;

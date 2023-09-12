@@ -11,6 +11,10 @@ export const writeTodosToFile = (todos: Todo[]) => {
   fs.writeFileSync("data/todos.json", data, "utf8");
 };
 
+export const createJSONFile = () => {
+  fs.writeFileSync("data/todos.json", JSON.stringify([]), "utf8");
+};
+
 export const deleteTodoFromFile = (id: string) => {
   const rawData = JSON.parse(fs.readFileSync("data/todos.json", "utf8"));
   const todos = rawData.filter((todo: Todo) => todo.id !== id);

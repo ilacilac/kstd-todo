@@ -1,28 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { GetServerSideProps } from "next";
 
-import { readTodosFromFile, writeTodosToFile } from "../lib/fileHandler";
-
 import TodoForm from "../components/Todo/TodoForm";
-import TodoList from "../components/Todo/TodoList";
 import {
   createTodoToServer,
   deleteTodoFromServer,
   getTodosFromServer,
   updateTodosToServer,
 } from "../service/todos";
-import { NoIdTodo, Status, Todo } from "../types/todo";
-import {
-  DragDropContext,
-  DropResult,
-  resetServerContext,
-} from "react-beautiful-dnd";
-import { Box, List, ListItem, styled } from "@mui/material";
-import Head from "next/head";
+import { NoIdTodo, Todo } from "../types/todo";
+import { resetServerContext } from "react-beautiful-dnd";
+import { List, ListItem, styled } from "@mui/material";
+
 import Link from "next/link";
 import { v4 as uuidv4 } from "uuid";
 import TodoDragableList from "components/Todo/TodoDragableList";
-import dayjs from "dayjs";
+import { createJSONFile } from "lib/fileHandler";
+
 type IndexProps = {
   todos: Todo[];
 };
@@ -34,17 +28,7 @@ const IndexPage: React.FC<IndexProps> = ({ todos }) => {
   const [categoriesArray, setCategoriesArray] =
     useState<string[]>(uniqueCategories);
 
-  const today = dayjs().toDate();
-  const tomorrow = dayjs().add(1, "day").toDate();
-  const [task, setTask] = useState("");
-  const [category, setCategory] = useState("");
-  const [startDate, setStartDate] = useState(today);
-  const [endDate, setEndDate] = useState(tomorrow);
-  const [priority, setPriority] = useState("상");
-  const [status, setStatus] = useState<Status>("대기중");
-  // TODO : 로직 최상단으로
   const deleteTodo = async (id: string) => {
-    // const todos = todosArray.filter((todo) => todo.id !== id);
     await deleteTodoFromServer(id);
     const newTodos = await getTodosFromServer();
     const newCategories = new Set(newTodos.map((todo: Todo) => todo.category));
@@ -69,8 +53,6 @@ const IndexPage: React.FC<IndexProps> = ({ todos }) => {
 
     setTodosArray([...todos, newTodo]);
     setCategoriesArray(uniqueCategories);
-    setTask("");
-    setCategory("");
   };
 
   const updateTodo = async (e: React.MouseEvent, todo: Todo) => {
@@ -89,7 +71,6 @@ const IndexPage: React.FC<IndexProps> = ({ todos }) => {
           }
         : _todo
     );
-    console.log("b", newTodos);
 
     setTodosArray(newTodos);
     updateTodosToServer(newTodos);
@@ -107,13 +88,7 @@ const IndexPage: React.FC<IndexProps> = ({ todos }) => {
           </ListItemStyled>
         ))}
       </ListStyled>
-      <TodoForm
-        setTodosArray={setTodosArray}
-        todos={todosArray}
-        categories={categoriesArray}
-        setCategoriesArray={setCategoriesArray}
-        addTodo={addTodo}
-      ></TodoForm>
+      <TodoForm categories={categoriesArray} addTodo={addTodo}></TodoForm>
       <TodoDragableList
         todos={todosArray}
         categories={categoriesArray}
@@ -130,11 +105,10 @@ export const getServerSideProps: GetServerSideProps = async () => {
   let todos: Todo[] = [];
   resetServerContext();
   try {
-    // todos = readTodosFromFile();
     todos = await getTodosFromServer();
-    console.log(todos);
   } catch (error) {
-    throw new Error(`readTodosFromFile Error : ${error}`);
+    createJSONFile();
+    console.error(`readTodosFromFile Error : ${error}`);
   }
   return {
     props: {

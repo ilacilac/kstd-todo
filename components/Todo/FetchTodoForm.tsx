@@ -45,15 +45,12 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
   const [priority, setPriority] = useState(todo.priority);
   const [status, setStatus] = useState(todo.status);
 
-  // handleClose();
-
   return (
     <FormGroup>
       <FormControl fullWidth sx={{ marginTop: "10px" }}>
         <TextField
           value={task}
           onChange={(e) => setTask(e.target.value)}
-          // placeholder="내용을 입력해주세요."
           required
           id="task"
           label="할일"
@@ -64,7 +61,6 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
         <TextField
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          // placeholder="내용을 입력해주세요."
           required
           id="category"
           label="카테고리"
@@ -128,7 +124,6 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
             <CalendarTodayIcon />
             <DateStyled
               selected={startDate}
-              // locale={ko}
               maxDate={endDate}
               onChange={(date: Date) => {
                 setStartDate(date);
@@ -203,11 +198,9 @@ const EndDateWrapStyled = styled(Box)`
 const StartDateStyled = styled(Box)`
   display: flex;
   align-items: center;
-
   border: none;
   border-radius: 5px;
   padding: 0px 15px;
-  // margin: 0 5px;
   background-color: #ededed;
 `;
 const EndDateStyled = styled(Box)`

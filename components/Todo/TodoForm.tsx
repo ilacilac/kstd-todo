@@ -20,20 +20,11 @@ import Select from "@mui/material/Select";
 import { NoIdTodo, Status, Todo } from "../../types/todo";
 
 type TodoFormProps = {
-  todos: Todo[];
-  setTodosArray: Dispatch<SetStateAction<Todo[]>>;
-  setCategoriesArray: Dispatch<SetStateAction<string[]>>;
   categories: string[];
   addTodo: (e: React.MouseEvent, todo: NoIdTodo) => void;
 };
 
-const TodoForm: React.FC<TodoFormProps> = ({
-  setTodosArray,
-  setCategoriesArray,
-  todos,
-  categories,
-  addTodo,
-}) => {
+const TodoForm: React.FC<TodoFormProps> = ({ categories, addTodo }) => {
   const today = dayjs().toDate();
   const tomorrow = dayjs().add(1, "day").toDate();
   const [task, setTask] = useState("");
@@ -42,8 +33,6 @@ const TodoForm: React.FC<TodoFormProps> = ({
   const [endDate, setEndDate] = useState(tomorrow);
   const [priority, setPriority] = useState("상");
   const [status, setStatus] = useState<Status>("대기중");
-  const newCategories = new Set(categories.concat(category));
-  const uniqueCategories = [...newCategories];
 
   return (
     <TodoFormWrapStyled>
@@ -52,8 +41,6 @@ const TodoForm: React.FC<TodoFormProps> = ({
           <TextField
             value={task}
             onChange={(e) => setTask(e.target.value)}
-            // placeholder="내용을 입력해주세요."
-            // sx={{ marginTop: "20px" }}
             required
             id="task"
             label="할 일"
@@ -63,7 +50,6 @@ const TodoForm: React.FC<TodoFormProps> = ({
           <TextField
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            // placeholder="내용을 입력해주세요."
             required
             id="category"
             label="카테고리"
@@ -89,7 +75,6 @@ const TodoForm: React.FC<TodoFormProps> = ({
             id="priority"
             value={priority}
             label="우선순위"
-            // sx={{ marginTop: "10px" }}
             onChange={(e) => setPriority(e.target.value)}
           >
             <MenuItem value={"상"}>상</MenuItem>
@@ -131,7 +116,7 @@ const TodoForm: React.FC<TodoFormProps> = ({
           </EndDateWrapStyled>
         </DateWrapStyled>
         <Button
-          onClick={(e) =>
+          onClick={(e) => {
             addTodo(e, {
               task,
               category,
@@ -139,8 +124,10 @@ const TodoForm: React.FC<TodoFormProps> = ({
               endDate,
               priority,
               status,
-            })
-          }
+            });
+            setTask("");
+            setCategory("");
+          }}
           type="submit"
           variant="contained"
           disabled={task && category ? false : true}
@@ -177,11 +164,9 @@ const DateWrapStyled = styled(Box)`
 const StartDateStyled = styled(Box)`
   display: flex;
   align-items: center;
-
   border: none;
   border-radius: 5px;
   padding: 0px 15px;
-  // margin: 0 5px;
   background-color: #ededed;
 `;
 const EndDateStyled = styled(Box)`

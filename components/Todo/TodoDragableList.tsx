@@ -1,15 +1,10 @@
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from "react-beautiful-dnd";
+import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { Box, List } from "@mui/material";
 import { Todo } from "../../types/todo";
-import TodoListItem from "./TodoListItem";
+
 import { Dispatch, SetStateAction } from "react";
 import { styled } from "@mui/system";
-// import { useRouter } from "next/router";
+
 import { updateTodosToServer } from "service/todos";
 import { useRouter } from "next/router";
 import TodoDragableListItem from "./TodoDragableListItem";
@@ -33,13 +28,12 @@ const TodoDragableList: React.FC<TodoListProps> = ({
   updateTodo,
 }) => {
   const { category } = useRouter().query;
-  // 드래그가 끝났을 때의 동작을 지정해주는 함수
+
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
 
-    // 드롭이 droppable 밖에서 일어났을 경우 바로 return
     if (!destination) return;
-    // 드래그가 발생한 위치와 드롭이 발생한 위치가 같을 경우 바로 return
+
     if (
       source.droppableId === destination.droppableId &&
       source.index === destination.index
@@ -51,20 +45,16 @@ const TodoDragableList: React.FC<TodoListProps> = ({
 
     add = newTodos[source.index];
 
-    // 드래그가 발생한 아이템을 add에 담고 원래 자리에서 제거
     if (source.droppableId === "inbox-column") {
       add = newTodos[source.index];
       newTodos.splice(source.index, 1);
     }
 
-    // 드롭이 발생한 곳에 add를 넣어줌
     if (destination.droppableId === "inbox-column") {
       newTodos.splice(destination.index, 0, { ...add });
     }
 
-    // todos와 completed 업데이트
     setTodosArray(newTodos);
-
     updateTodosToServer(newTodos);
   };
 
@@ -91,6 +81,9 @@ const TodoDragableList: React.FC<TodoListProps> = ({
                     updateTodo={updateTodo}
                   />
                 ))}
+                {!todos.length && (
+                  <NoTaskBox>등록된 항목이 없습니다.</NoTaskBox>
+                )}
                 {provided.placeholder}
               </List>
             </Box>

@@ -31,17 +31,7 @@ const TodosPage: React.FC<TodosProps> = ({
 
   const [categoriesArray, setCategoriesArray] = useState<string[]>(categories);
 
-  const today = dayjs().toDate();
-  const tomorrow = dayjs().add(1, "day").toDate();
-  const [task, setTask] = useState("");
-  const [category, setCategory] = useState("");
-  const [startDate, setStartDate] = useState(today);
-  const [endDate, setEndDate] = useState(tomorrow);
-  const [priority, setPriority] = useState("상");
-  const [status, setStatus] = useState<Status>("대기중");
-
   const deleteTodo = async (id: string) => {
-    // const todos = todosArray.filter((todo) => todo.id !== id);
     await deleteTodoFromServer(id);
     const newTodos = await getTodosFromServer();
     setTodosArray(newTodos);
