@@ -1,23 +1,11 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import DatePicker from "react-datepicker";
-import dayjs from "dayjs";
-import { ko } from "date-fns/locale";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import {
-  Box,
-  Button,
-  FormControl,
-  FormGroup,
-  FormHelperText,
-  InputLabel,
-  MenuItem,
-  styled,
-  TextField,
-} from "@mui/material";
-import Select from "@mui/material/Select";
 
-import { NoIdTodo, Status, Todo } from "../../types/todo";
+import dayjs from "dayjs";
+
+import { Box, Button, FormGroup, FormHelperText, styled } from "@mui/material";
+
+import { NoIdTodo, Priority, Status, Todo } from "../../types/todo";
 import TaskTextField from "components/Common/TaskTextField";
 import CategoryTextField from "components/Common/CategoryTextField";
 import PrioritySelect from "components/Common/PrioritySelect";
@@ -35,7 +23,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ categories, addTodo }) => {
   const [category, setCategory] = useState("");
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(tomorrow);
-  const [priority, setPriority] = useState("상");
+  const [priority, setPriority] = useState<Priority>("상");
   const [status, setStatus] = useState<Status>("대기중");
 
   return (
