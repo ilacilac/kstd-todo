@@ -15,8 +15,8 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           <TitleStyled href="/">TODO LIST</TitleStyled>
         </TitleWrapStyled>
       </HeaderStyled>
-
       <Component {...pageProps} />
+      <div id="modal-root"></div>
     </>
   );
 };

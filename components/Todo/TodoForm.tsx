@@ -1,7 +1,7 @@
-// components/TodoForm.tsx
-
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
+import DatePicker from "react-datepicker";
+import dayjs from "dayjs";
 import { ko } from "date-fns/locale";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import {
@@ -15,21 +15,16 @@ import {
   styled,
   TextField,
 } from "@mui/material";
+import Select from "@mui/material/Select";
 
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-
-import { createTodoToServer } from "service/todos";
-import { v4 as uuidv4 } from "uuid";
-import { Status, Todo } from "../../types/todo";
-
-import dayjs from "dayjs";
-import DatePicker from "react-datepicker";
+import { NoIdTodo, Status, Todo } from "../../types/todo";
 
 type TodoFormProps = {
   todos: Todo[];
   setTodosArray: Dispatch<SetStateAction<Todo[]>>;
   setCategoriesArray: Dispatch<SetStateAction<string[]>>;
   categories: string[];
+  addTodo: (e: React.MouseEvent, todo: NoIdTodo) => void;
 };
 
 const TodoForm: React.FC<TodoFormProps> = ({
@@ -37,6 +32,7 @@ const TodoForm: React.FC<TodoFormProps> = ({
   setCategoriesArray,
   todos,
   categories,
+  addTodo,
 }) => {
   const today = dayjs().toDate();
   const tomorrow = dayjs().add(1, "day").toDate();
@@ -46,33 +42,8 @@ const TodoForm: React.FC<TodoFormProps> = ({
   const [endDate, setEndDate] = useState(tomorrow);
   const [priority, setPriority] = useState("상");
   const [status, setStatus] = useState<Status>("대기중");
-
   const newCategories = new Set(categories.concat(category));
   const uniqueCategories = [...newCategories];
-  const handleClick = async (e: React.MouseEvent) => {
-    e.preventDefault();
-
-    const newTodo = {
-      id: uuidv4(),
-      task,
-      category,
-      startDate,
-      endDate,
-      priority,
-      status,
-    };
-
-    if (!task) {
-      alert("할 일을 모두 입력해주세요.");
-      return false;
-    }
-    await createTodoToServer(newTodo);
-
-    setTodosArray([...todos, newTodo]);
-    setCategoriesArray(uniqueCategories);
-    setTask("");
-    setCategory("");
-  };
 
   return (
     <TodoFormWrapStyled>
@@ -127,11 +98,6 @@ const TodoForm: React.FC<TodoFormProps> = ({
           </Select>
         </FormControl>
 
-        {/* <Checkbox
-        aria-label="완료"
-        checked={status}
-        onChange={(e) => setStatus(e.target.checked)}
-      /> */}
         <DateWrapStyled>
           <StartDateWrapStyled>
             <FormHelperText>시작일</FormHelperText>
@@ -164,10 +130,19 @@ const TodoForm: React.FC<TodoFormProps> = ({
           </EndDateWrapStyled>
         </DateWrapStyled>
         <Button
-          onClick={handleClick}
+          onClick={(e) =>
+            addTodo(e, {
+              task,
+              category,
+              startDate,
+              endDate,
+              priority,
+              status,
+            })
+          }
           type="submit"
           variant="contained"
-          disabled={task ? false : true}
+          disabled={task && category ? false : true}
           sx={{ marginTop: "10px", padding: "10px 0" }}
         >
           추가하기

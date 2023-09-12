@@ -1,17 +1,9 @@
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from "react-beautiful-dnd";
+import { Dispatch, SetStateAction } from "react";
+import { useRouter } from "next/router";
 import { Box, List } from "@mui/material";
+import { styled } from "@mui/system";
 import { Todo } from "../../types/todo";
 import TodoListItem from "./TodoListItem";
-import { Dispatch, SetStateAction } from "react";
-import { styled } from "@mui/system";
-// import { useRouter } from "next/router";
-import { updateTodosToServer } from "service/todos";
-import { useRouter } from "next/router";
 
 type TodoListProps = {
   todos: Todo[];
@@ -19,50 +11,17 @@ type TodoListProps = {
   setCategoriesArray: Dispatch<SetStateAction<string[]>>;
   deleteTodo: (id: string) => void;
   categories: string[];
+  updateTodo: (e: React.MouseEvent, todo: Todo) => void;
 };
 
 const TodoList: React.FC<TodoListProps> = ({
   todos,
-  setTodosArray,
   deleteTodo,
   categories,
   setCategoriesArray,
+  updateTodo,
 }) => {
   const { category } = useRouter().query;
-  // 드래그가 끝났을 때의 동작을 지정해주는 함수
-  const onDragEnd = (result: DropResult) => {
-    const { source, destination } = result;
-
-    // 드롭이 droppable 밖에서 일어났을 경우 바로 return
-    if (!destination) return;
-    // 드래그가 발생한 위치와 드롭이 발생한 위치가 같을 경우 바로 return
-    if (
-      source.droppableId === destination.droppableId &&
-      source.index === destination.index
-    )
-      return;
-
-    let add: Todo;
-    let newTodos = todos;
-
-    add = newTodos[source.index];
-
-    // 드래그가 발생한 아이템을 add에 담고 원래 자리에서 제거
-    if (source.droppableId === "inbox-column") {
-      add = newTodos[source.index];
-      newTodos.splice(source.index, 1);
-    }
-
-    // 드롭이 발생한 곳에 add를 넣어줌
-    if (destination.droppableId === "inbox-column") {
-      newTodos.splice(destination.index, 0, { ...add });
-    }
-
-    // todos와 completed 업데이트
-    setTodosArray(newTodos);
-
-    updateTodosToServer(newTodos);
-  };
 
   return (
     <TodoListWrapStyled>
@@ -72,11 +31,10 @@ const TodoList: React.FC<TodoListProps> = ({
             {todos.map((todo, index) => (
               <TodoListItem
                 key={todo.id}
-                index={index}
                 todo={todo}
                 todos={todos}
                 deleteTodo={deleteTodo}
-                setTodosArray={setTodosArray}
+                updateTodo={updateTodo}
                 categories={categories}
                 setCategoriesArray={setCategoriesArray}
               />
@@ -90,11 +48,10 @@ const TodoList: React.FC<TodoListProps> = ({
                 todo.category === category ? (
                   <TodoListItem
                     key={todo.id}
-                    index={index}
                     todo={todo}
                     todos={todos}
                     deleteTodo={deleteTodo}
-                    setTodosArray={setTodosArray}
+                    updateTodo={updateTodo}
                     setCategoriesArray={setCategoriesArray}
                     categories={categories}
                   />

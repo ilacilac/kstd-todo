@@ -1,38 +1,26 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
-import {
-  Box,
-  Button,
-  Checkbox,
-  ListItem,
-  styled,
-  Typography,
-} from "@mui/material";
+import dayjs from "dayjs";
+import { Box, Button, ListItem, styled, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { Draggable } from "react-beautiful-dnd";
 import { Todo } from "../../types/todo";
 import ModalPortal from "components/Modal/ModalPortal";
 import TodoModal from "components/Modal/TodoModal";
-import { updateTodosToServer } from "service/todos";
-import dayjs from "dayjs";
-import { parseISO, format } from "date-fns";
 
 type TodoListItemProps = {
   todo: Todo;
   todos: Todo[];
-  index: number;
-  deleteTodo: (id: string) => void;
-  setTodosArray: Dispatch<SetStateAction<Todo[]>>;
-  setCategoriesArray: Dispatch<SetStateAction<string[]>>;
   categories: string[];
+  deleteTodo: (id: string) => void;
+  setCategoriesArray: Dispatch<SetStateAction<string[]>>;
+  updateTodo: (e: React.MouseEvent, todo: Todo) => void;
 };
 
 const TodoListItem: React.FC<TodoListItemProps> = ({
   todo,
   todos,
-  index,
   deleteTodo,
-  setTodosArray,
+  updateTodo,
   setCategoriesArray,
   categories,
 }) => {
@@ -48,22 +36,10 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
     handleOpen();
   };
 
-  // const handleStatus = async (id: string) => {
-  //   const newTodos = todos.map((_todo) =>
-  //     _todo.id === id ? { ..._todo, status: !_todo.status } : _todo
-  //   );
-  //   setTodosArray(newTodos);
-  //   updateTodosToServer(newTodos);
-  // };
   return (
     <>
       <ListItemStyle>
         <Box sx={{ display: "flex", alignItems: "center", maxWidth: "90%" }}>
-          {/* <Checkbox
-                aria-label={todo.status ? "완료" : "미완료"}
-                checked={todo.status}
-                onChange={() => handleCheckbox(todo.id)}
-              /> */}
           <Typography
             sx={
               todo.status === "완료"
@@ -128,7 +104,7 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
             open={open}
             todo={todo}
             todos={todos}
-            setTodosArray={setTodosArray}
+            updateTodo={updateTodo}
             categories={categories}
             setCategoriesArray={setCategoriesArray}
           />

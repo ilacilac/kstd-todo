@@ -16,18 +16,21 @@ import TodoDragableListItem from "./TodoDragableListItem";
 
 type TodoListProps = {
   todos: Todo[];
+  categories: string[];
   setTodosArray: Dispatch<SetStateAction<Todo[]>>;
   setCategoriesArray: Dispatch<SetStateAction<string[]>>;
   deleteTodo: (id: string) => void;
-  categories: string[];
+  updateTodo: (e: React.MouseEvent, todo: Todo) => void;
 };
 
 const TodoDragableList: React.FC<TodoListProps> = ({
   todos,
-  setTodosArray,
-  deleteTodo,
+
   categories,
+  setTodosArray,
   setCategoriesArray,
+  deleteTodo,
+  updateTodo,
 }) => {
   const { category } = useRouter().query;
   // 드래그가 끝났을 때의 동작을 지정해주는 함수
@@ -83,9 +86,9 @@ const TodoDragableList: React.FC<TodoListProps> = ({
                     todo={todo}
                     todos={todos}
                     deleteTodo={deleteTodo}
-                    setTodosArray={setTodosArray}
                     categories={categories}
                     setCategoriesArray={setCategoriesArray}
+                    updateTodo={updateTodo}
                   />
                 ))}
                 {provided.placeholder}

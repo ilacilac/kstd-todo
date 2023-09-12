@@ -1,47 +1,39 @@
-// components/FetchTodoForm.tsx
-
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import {
   Box,
   Button,
-  Checkbox,
-  FilledTextFieldProps,
   FormControl,
   FormGroup,
   FormHelperText,
-  Input,
   InputLabel,
   MenuItem,
   styled,
   TextField,
-  TextFieldVariants,
-  Typography,
 } from "@mui/material";
 
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ko } from "date-fns/locale";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Select from "@mui/material/Select";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import dayjs from "dayjs";
-import DatePicker from "react-datepicker";
-import { createTodoToServer, updateTodosToServer } from "service/todos";
-import { v4 as uuidv4 } from "uuid";
+
 import { Status, Todo } from "../../types/todo";
-import { parseISO, format } from "date-fns";
 
 type TodoFormProps = {
   todo: Todo;
   todos: Todo[];
   handleClose: () => void;
-  setTodosArray: Dispatch<SetStateAction<Todo[]>>;
+
   setCategoriesArray: Dispatch<SetStateAction<string[]>>;
   categories: string[];
+  updateTodo: (e: React.MouseEvent, todo: Todo) => void;
 };
 
 const FetchTodoForm: React.FC<TodoFormProps> = ({
   todo,
+  updateTodo,
   todos,
-  setTodosArray,
+
   handleClose,
   categories,
   setCategoriesArray,
@@ -53,32 +45,7 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
   const [priority, setPriority] = useState(todo.priority);
   const [status, setStatus] = useState(todo.status);
 
-  const handleClick = async (e: React.MouseEvent) => {
-    e.preventDefault();
-
-    const newTodos = todos.map((_todo) =>
-      _todo.id === todo.id
-        ? {
-            ..._todo,
-            id: todo.id,
-            task,
-            category,
-            startDate,
-            endDate,
-            priority,
-            status,
-          }
-        : _todo
-    );
-
-    updateTodosToServer(newTodos);
-    setTodosArray(newTodos);
-
-    const newCategories = new Set(newTodos.map((todo: Todo) => todo.category));
-    const newUniqueCategories = [...newCategories] as string[];
-    setCategoriesArray(newUniqueCategories);
-    handleClose();
-  };
+  // handleClose();
 
   return (
     <FormGroup>
@@ -185,10 +152,21 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
       </DateWrapStyled>
 
       <Button
-        onClick={handleClick}
+        onClick={(e) => {
+          updateTodo(e, {
+            id: todo.id,
+            task,
+            category,
+            startDate,
+            endDate,
+            priority,
+            status,
+          });
+          handleClose();
+        }}
         type="submit"
         variant="contained"
-        disabled={task ? false : true}
+        disabled={task && category ? false : true}
         sx={{ marginTop: "10px", padding: "10px 0" }}
       >
         수정하기

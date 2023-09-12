@@ -8,3 +8,11 @@ export type Todo = {
   priority: string;
   status: Status;
 };
+export type NoIdTodo = {
+  category: string;
+  task: string;
+  startDate: Date;
+  endDate: Date;
+  priority: string;
+  status: Status;
+};

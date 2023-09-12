@@ -1,28 +1,19 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
-import {
-  Box,
-  Button,
-  Checkbox,
-  ListItem,
-  styled,
-  Typography,
-} from "@mui/material";
+import { Box, Button, ListItem, styled, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { Draggable } from "react-beautiful-dnd";
 import { Todo } from "../../types/todo";
 import ModalPortal from "components/Modal/ModalPortal";
 import TodoModal from "components/Modal/TodoModal";
-import { updateTodosToServer } from "service/todos";
 import dayjs from "dayjs";
-import { parseISO, format } from "date-fns";
 
 type TodoListItemProps = {
   todo: Todo;
   todos: Todo[];
   index: number;
   deleteTodo: (id: string) => void;
-  setTodosArray: Dispatch<SetStateAction<Todo[]>>;
+  updateTodo: (e: React.MouseEvent, todo: Todo) => void;
   setCategoriesArray: Dispatch<SetStateAction<string[]>>;
   categories: string[];
 };
@@ -32,7 +23,7 @@ const TodoDragableListItem: React.FC<TodoListItemProps> = ({
   todos,
   index,
   deleteTodo,
-  setTodosArray,
+  updateTodo,
   setCategoriesArray,
   categories,
 }) => {
@@ -137,9 +128,9 @@ const TodoDragableListItem: React.FC<TodoListItemProps> = ({
             open={open}
             todo={todo}
             todos={todos}
-            setTodosArray={setTodosArray}
             categories={categories}
             setCategoriesArray={setCategoriesArray}
+            updateTodo={updateTodo}
           />
         </ModalPortal>
       )}

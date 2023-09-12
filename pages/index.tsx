@@ -6,11 +6,12 @@ import { readTodosFromFile, writeTodosToFile } from "../lib/fileHandler";
 import TodoForm from "../components/Todo/TodoForm";
 import TodoList from "../components/Todo/TodoList";
 import {
+  createTodoToServer,
   deleteTodoFromServer,
   getTodosFromServer,
   updateTodosToServer,
 } from "../service/todos";
-import { Todo } from "../types/todo";
+import { NoIdTodo, Status, Todo } from "../types/todo";
 import {
   DragDropContext,
   DropResult,
@@ -19,8 +20,9 @@ import {
 import { Box, List, ListItem, styled } from "@mui/material";
 import Head from "next/head";
 import Link from "next/link";
+import { v4 as uuidv4 } from "uuid";
 import TodoDragableList from "components/Todo/TodoDragableList";
-
+import dayjs from "dayjs";
 type IndexProps = {
   todos: Todo[];
 };
@@ -31,6 +33,16 @@ const IndexPage: React.FC<IndexProps> = ({ todos }) => {
   const uniqueCategories = [...categories];
   const [categoriesArray, setCategoriesArray] =
     useState<string[]>(uniqueCategories);
+
+  const today = dayjs().toDate();
+  const tomorrow = dayjs().add(1, "day").toDate();
+  const [task, setTask] = useState("");
+  const [category, setCategory] = useState("");
+  const [startDate, setStartDate] = useState(today);
+  const [endDate, setEndDate] = useState(tomorrow);
+  const [priority, setPriority] = useState("상");
+  const [status, setStatus] = useState<Status>("대기중");
+  // TODO : 로직 최상단으로
   const deleteTodo = async (id: string) => {
     // const todos = todosArray.filter((todo) => todo.id !== id);
     await deleteTodoFromServer(id);
@@ -42,6 +54,50 @@ const IndexPage: React.FC<IndexProps> = ({ todos }) => {
     setCategoriesArray(newUniqueCategories);
   };
 
+  const addTodo = async (e: React.MouseEvent, todo: NoIdTodo) => {
+    e.preventDefault();
+    if (!todo.task || !todo.category) {
+      alert("할 일과 카테고리 모두 입력해주세요.");
+      return false;
+    }
+    const newTodo = {
+      ...todo,
+      id: uuidv4(),
+    };
+
+    await createTodoToServer(newTodo);
+
+    setTodosArray([...todos, newTodo]);
+    setCategoriesArray(uniqueCategories);
+    setTask("");
+    setCategory("");
+  };
+
+  const updateTodo = async (e: React.MouseEvent, todo: Todo) => {
+    e.preventDefault();
+
+    const newTodos = todosArray.map((_todo) =>
+      _todo.id === todo.id
+        ? {
+            id: todo.id,
+            task: todo.task,
+            category: todo.category,
+            startDate: todo.startDate,
+            endDate: todo.endDate,
+            priority: todo.priority,
+            status: todo.status,
+          }
+        : _todo
+    );
+    console.log("b", newTodos);
+
+    setTodosArray(newTodos);
+    updateTodosToServer(newTodos);
+
+    const newCategories = new Set(newTodos.map((todo: Todo) => todo.category));
+    const newUniqueCategories = [...newCategories] as string[];
+    setCategoriesArray(newUniqueCategories);
+  };
   return (
     <BoxWrapStyled>
       <ListStyled>
@@ -56,15 +112,16 @@ const IndexPage: React.FC<IndexProps> = ({ todos }) => {
         todos={todosArray}
         categories={categoriesArray}
         setCategoriesArray={setCategoriesArray}
+        addTodo={addTodo}
       ></TodoForm>
       <TodoDragableList
         todos={todosArray}
-        setTodosArray={setTodosArray}
-        deleteTodo={deleteTodo}
         categories={categoriesArray}
         setCategoriesArray={setCategoriesArray}
+        deleteTodo={deleteTodo}
+        updateTodo={updateTodo}
+        setTodosArray={setTodosArray}
       />
-      <div id="modal-root"></div>
     </BoxWrapStyled>
   );
 };
