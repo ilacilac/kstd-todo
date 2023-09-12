@@ -18,6 +18,10 @@ import {
 import Select from "@mui/material/Select";
 
 import { NoIdTodo, Status, Todo } from "../../types/todo";
+import TaskTextField from "components/Common/TaskTextField";
+import CategoryTextField from "components/Common/CategoryTextField";
+import PrioritySelect from "components/Common/PrioritySelect";
+import DateField from "components/Common/DateField";
 
 type TodoFormProps = {
   categories: string[];
@@ -37,84 +41,33 @@ const TodoForm: React.FC<TodoFormProps> = ({ categories, addTodo }) => {
   return (
     <TodoFormWrapStyled>
       <FormGroup>
-        <FormControl fullWidth>
-          <TextField
-            value={task}
-            onChange={(e) => setTask(e.target.value)}
-            required
-            id="task"
-            label="할 일"
-          />
-        </FormControl>
-        <FormControl fullWidth sx={{ marginTop: "10px" }}>
-          <TextField
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            required
-            id="category"
-            label="카테고리"
-          />
-        </FormControl>
-        <CategoriesBox>
-          {categories &&
-            categories.map((category) => (
-              <CategoryButton
-                onClick={() => setCategory(category)}
-                variant="outlined"
-                size="small"
-                key={category}
-              >
-                {category}
-              </CategoryButton>
-            ))}
-        </CategoriesBox>
-        <FormControl fullWidth sx={{ marginTop: "10px" }}>
-          <InputLabel id="priority-label">우선순위</InputLabel>
-          <Select
-            labelId="priority-label"
-            id="priority"
-            value={priority}
-            label="우선순위"
-            onChange={(e) => setPriority(e.target.value)}
-          >
-            <MenuItem value={"상"}>상</MenuItem>
-            <MenuItem value={"중"}>중</MenuItem>
-            <MenuItem value={"하"}>하</MenuItem>
-          </Select>
-        </FormControl>
+        <TaskTextField task={task} setTask={setTask} />
+        <CategoryTextField
+          categories={categories}
+          category={category}
+          setCategory={setCategory}
+        />
+        <PrioritySelect priority={priority} setPriority={setPriority} />
 
         <DateWrapStyled>
           <StartDateWrapStyled>
             <FormHelperText>시작일</FormHelperText>
-            <StartDateStyled>
-              <CalendarTodayIcon />
-              <DateStyled
-                selected={startDate}
-                locale={ko}
-                maxDate={endDate}
-                onChange={(date: Date) => {
-                  setStartDate(date);
-                }}
-                dateFormat="yyyy-MM-dd"
-              />
-            </StartDateStyled>
+            <DateField
+              selected={startDate}
+              maxDate={endDate}
+              setDate={setStartDate}
+            />
           </StartDateWrapStyled>
           <EndDateWrapStyled>
             <FormHelperText sx={{ marginLeft: "5px" }}>종료일</FormHelperText>
-            <EndDateStyled>
-              <CalendarTodayIcon />
-              <DateStyled
-                selected={endDate}
-                locale={ko}
-                onChange={(date: Date) => {
-                  setEndDate(date);
-                }}
-                minDate={startDate}
-                dateFormat="yyyy-MM-dd"
-              />
-            </EndDateStyled>
+            <DateField
+              selected={endDate}
+              minDate={startDate}
+              setDate={setEndDate}
+            />
           </EndDateWrapStyled>
         </DateWrapStyled>
+
         <Button
           onClick={(e) => {
             addTodo(e, {
@@ -151,48 +104,17 @@ const TodoFormWrapStyled = styled(Box)`
 const StartDateWrapStyled = styled(Box)`
   display: flex;
   flex-direction: column;
+  align-items: start;
+  margin-right: 5px;
 `;
 const EndDateWrapStyled = styled(Box)`
   display: flex;
   flex-direction: column;
+  align-items: start;
 `;
 
 const DateWrapStyled = styled(Box)`
   display: flex;
 `;
 
-const StartDateStyled = styled(Box)`
-  display: flex;
-  align-items: center;
-  border: none;
-  border-radius: 5px;
-  padding: 0px 15px;
-  background-color: #ededed;
-`;
-const EndDateStyled = styled(Box)`
-  display: flex;
-  align-items: center;
-
-  border-radius: 5px;
-  border: none;
-  padding: 0px 15px;
-  margin: 0 5px;
-  background-color: #ededed;
-`;
-
-const DateStyled = styled(DatePicker)`
-  padding: 15px 0px;
-  margin-left: 10px;
-  border: none;
-  background-color: transparent;
-`;
-
-const CategoriesBox = styled(Box)`
-  margin: 10px 0;
-  display: flex;
-`;
-const CategoryButton = styled(Button)`
-  margin-right: 5px;
-  border-radius: 30px;
-`;
 export default TodoForm;
