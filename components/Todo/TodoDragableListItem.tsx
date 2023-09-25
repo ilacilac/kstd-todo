@@ -7,26 +7,27 @@ import { Todo } from "../../types/todo";
 import ModalPortal from "components/Modal/ModalPortal";
 import TodoModal from "components/Modal/TodoModal";
 import dayjs from "dayjs";
+import { useMutation, useQueryClient } from "react-query";
+import axios from "axios";
+import { deleteTodoFromServer } from "service/todos";
 
 type TodoListItemProps = {
   todo: Todo;
   todos: Todo[];
   index: number;
-  deleteTodo: (id: string) => void;
-  updateTodo: (e: React.MouseEvent, todo: Todo) => void;
-  setCategoriesArray: Dispatch<SetStateAction<string[]>>;
   categories: string[];
+  setTodosArray: Dispatch<SetStateAction<Todo[]>>;
 };
 
 const TodoDragableListItem: React.FC<TodoListItemProps> = ({
   todo,
   todos,
   index,
-  deleteTodo,
-  updateTodo,
-  setCategoriesArray,
   categories,
+  setTodosArray,
 }) => {
+  const queryClient = useQueryClient();
+
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
     setOpen(true);
@@ -38,6 +39,14 @@ const TodoDragableListItem: React.FC<TodoListItemProps> = ({
   const onClick = () => {
     handleOpen();
   };
+
+  const deleteTodo = useMutation((id: string) => deleteTodoFromServer(id), {
+    onSuccess: (_, id) => {
+      const newTodos = todos.filter((todo) => todo.id !== id);
+      console.log(newTodos);
+      setTodosArray(newTodos);
+    },
+  });
 
   return (
     <>
@@ -100,7 +109,7 @@ const TodoDragableListItem: React.FC<TodoListItemProps> = ({
               </Button>
               <Button
                 sx={buttonCommonStyle}
-                onClick={() => deleteTodo(todo.id)}
+                onClick={() => deleteTodo.mutate(todo.id)}
                 title="삭제하기"
               >
                 <DeleteIcon fontSize="small" />
@@ -117,8 +126,6 @@ const TodoDragableListItem: React.FC<TodoListItemProps> = ({
             todo={todo}
             todos={todos}
             categories={categories}
-            setCategoriesArray={setCategoriesArray}
-            updateTodo={updateTodo}
           />
         </ModalPortal>
       )}

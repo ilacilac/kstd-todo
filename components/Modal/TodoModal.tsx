@@ -11,9 +11,7 @@ type ModalProps = {
   todo: Todo;
   todos: Todo[];
 
-  setCategoriesArray: Dispatch<SetStateAction<string[]>>;
   categories: string[];
-  updateTodo: (e: React.MouseEvent, todo: Todo) => void;
 };
 
 const TodoModal: React.FC<ModalProps> = ({
@@ -22,8 +20,6 @@ const TodoModal: React.FC<ModalProps> = ({
   todo,
   todos,
   categories,
-  setCategoriesArray,
-  updateTodo,
 }) => {
   const style = {
     position: "absolute",
@@ -61,8 +57,6 @@ const TodoModal: React.FC<ModalProps> = ({
           todos={todos}
           handleClose={handleClose}
           categories={categories}
-          setCategoriesArray={setCategoriesArray}
-          updateTodo={updateTodo}
         />
       </Box>
     </Modal>

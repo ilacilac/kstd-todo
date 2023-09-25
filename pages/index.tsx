@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 
 import TodoForm from "../components/Todo/TodoForm";
@@ -16,19 +16,33 @@ import Link from "next/link";
 import { v4 as uuidv4 } from "uuid";
 import TodoDragableList from "components/Todo/TodoDragableList";
 import { createJSONFile } from "lib/fileHandler";
+import { dehydrate, QueryClient, useQuery } from "react-query";
 
 type IndexProps = {
   todos: Todo[];
 };
 
-const IndexPage: React.FC<IndexProps> = ({ todos }) => {
+const IndexPage: React.FC<IndexProps> = () => {
   // TODO : state -> ContextAPI ...
-  const [todosArray, setTodosArray] = useState<Todo[]>(todos);
-  const categories = new Set(todos.map((todo) => todo.category));
-  const uniqueCategories = [...categories];
-  const [categoriesArray, setCategoriesArray] =
-    useState<string[]>(uniqueCategories);
 
+  const { isLoading, data: todos } = useQuery(
+    ["todos"],
+    () => getTodosFromServer(),
+    {
+      initialData: [], // 초기 데이터 설정
+      refetchOnMount: true,
+    }
+  );
+  const [todosArray, setTodosArray] = useState<Todo[]>(todos);
+
+  const categories = new Set(todos?.map((todo: Todo) => todo.category));
+  const uniqueCategories: string[] = [...categories] as string[];
+
+  useEffect(() => {
+    setTodosArray(todos);
+  }, [todos]);
+
+  // console.log("todosArray", todosArray);
   // TODO : Custom hook
   const deleteTodo = async (id: string) => {
     await deleteTodoFromServer(id);
@@ -53,8 +67,7 @@ const IndexPage: React.FC<IndexProps> = ({ todos }) => {
 
     await createTodoToServer(newTodo);
 
-    setTodosArray([...todos, newTodo]);
-    setCategoriesArray(uniqueCategories);
+    setTodosArray([...todosArray, newTodo]);
   };
 
   const updateTodo = async (e: React.MouseEvent, todo: Todo) => {
@@ -79,42 +92,48 @@ const IndexPage: React.FC<IndexProps> = ({ todos }) => {
 
     const newCategories = new Set(newTodos.map((todo: Todo) => todo.category));
     const newUniqueCategories = [...newCategories] as string[];
-    setCategoriesArray(newUniqueCategories);
   };
   return (
-    <BoxWrapStyled>
-      <ListStyled>
-        {categoriesArray.map((category) => (
-          <ListItemStyled key={category}>
-            <LinkStyled href={`/todos/${category}`}>{category}</LinkStyled>
-          </ListItemStyled>
-        ))}
-      </ListStyled>
-      <TodoForm categories={categoriesArray} addTodo={addTodo}></TodoForm>
-      <TodoDragableList
-        todos={todosArray}
-        categories={categoriesArray}
-        setCategoriesArray={setCategoriesArray}
-        deleteTodo={deleteTodo}
-        updateTodo={updateTodo}
-        setTodosArray={setTodosArray}
-      />
-    </BoxWrapStyled>
+    <>
+      {isLoading && <BoxWrapStyled>Loading...</BoxWrapStyled>}
+      {!isLoading && todosArray && (
+        <BoxWrapStyled>
+          <ListStyled>
+            {uniqueCategories.map((category) => (
+              <ListItemStyled key={category}>
+                <LinkStyled href={`/todos/${category}`}>{category}</LinkStyled>
+              </ListItemStyled>
+            ))}
+          </ListStyled>
+          <TodoForm categories={uniqueCategories} addTodo={addTodo}></TodoForm>
+          <TodoDragableList
+            todos={todosArray}
+            categories={uniqueCategories}
+            deleteTodo={deleteTodo}
+            updateTodo={updateTodo}
+            setTodosArray={setTodosArray}
+          />
+        </BoxWrapStyled>
+      )}
+    </>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  let todos: Todo[] = [];
+  const queryClient = new QueryClient();
+
+  // let todos: Todo[] = [];
   resetServerContext();
   try {
-    todos = await getTodosFromServer();
+    // todos = await getTodosFromServer();
+    // await queryClient.prefetchQuery(['todos'], getTodosFromServer)
   } catch (error) {
     createJSONFile();
     console.error(`readTodosFromFile Error : ${error}`);
   }
   return {
     props: {
-      todos,
+      dehydratedState: dehydrate(queryClient),
     },
   };
 };
