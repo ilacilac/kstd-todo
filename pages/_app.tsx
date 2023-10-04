@@ -1,4 +1,5 @@
 import { Button, styled, Typography } from "@mui/material";
+import { TodosProvider } from "context/TodoContext";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import Link from "next/link";
@@ -18,7 +19,9 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             <TitleStyled href="/">TODO LIST</TitleStyled>
           </TitleWrapStyled>
         </HeaderStyled>
-        <Component {...pageProps} />
+        <TodosProvider>
+          <Component {...pageProps} />
+        </TodosProvider>
         <div id="modal-root"></div>
       </QueryClientProvider>
     </>

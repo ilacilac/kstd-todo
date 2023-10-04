@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import { Box, Button, ListItem, styled, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -8,26 +8,24 @@ import ModalPortal from "components/Modal/ModalPortal";
 import TodoModal from "components/Modal/TodoModal";
 import dayjs from "dayjs";
 import { useMutation, useQueryClient } from "react-query";
-import axios from "axios";
 import { deleteTodoFromServer } from "service/todos";
+import { useTodos } from "context/TodoContext";
 
 type TodoListItemProps = {
   todo: Todo;
-  todos: Todo[];
   index: number;
+
   categories: string[];
-  setTodosArray: Dispatch<SetStateAction<Todo[]>>;
 };
 
 const TodoDragableListItem: React.FC<TodoListItemProps> = ({
   todo,
-  todos,
+
   index,
   categories,
-  setTodosArray,
 }) => {
   const queryClient = useQueryClient();
-
+  const { todos, setTodos } = useTodos();
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
     setOpen(true);
@@ -44,7 +42,7 @@ const TodoDragableListItem: React.FC<TodoListItemProps> = ({
     onSuccess: (_, id) => {
       const newTodos = todos.filter((todo) => todo.id !== id);
       console.log(newTodos);
-      setTodosArray(newTodos);
+      setTodos(newTodos);
     },
   });
 
@@ -124,7 +122,6 @@ const TodoDragableListItem: React.FC<TodoListItemProps> = ({
             handleClose={handleClose}
             open={open}
             todo={todo}
-            todos={todos}
             categories={categories}
           />
         </ModalPortal>

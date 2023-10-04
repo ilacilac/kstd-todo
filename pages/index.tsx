@@ -17,6 +17,7 @@ import { v4 as uuidv4 } from "uuid";
 import TodoDragableList from "components/Todo/TodoDragableList";
 import { createJSONFile } from "lib/fileHandler";
 import { dehydrate, QueryClient, useQuery } from "react-query";
+import { TodosProvider, useTodos } from "context/TodoContext";
 
 type IndexProps = {
   todos: Todo[];
@@ -25,21 +26,21 @@ type IndexProps = {
 const IndexPage: React.FC<IndexProps> = () => {
   // TODO : state -> ContextAPI ...
 
-  const { isLoading, data: todos } = useQuery(
-    ["todos"],
-    () => getTodosFromServer(),
-    {
-      initialData: [], // 초기 데이터 설정
-      refetchOnMount: true,
-    }
-  );
-  const [todosArray, setTodosArray] = useState<Todo[]>(todos);
-
+  const { isLoading, data } = useQuery(["todos"], () => getTodosFromServer(), {
+    initialData: [], // 초기 데이터 설정
+    refetchOnMount: true,
+    onSuccess: (data) => {
+      // data를 setTodos 함수를 사용하여 상태에 저장
+      setTodos(data);
+    },
+  });
+  const [todosArray, setTodosArray] = useState<Todo[]>(data);
+  const { todos, setTodos } = useTodos();
   const categories = new Set(todos?.map((todo: Todo) => todo.category));
   const uniqueCategories: string[] = [...categories] as string[];
 
   useEffect(() => {
-    setTodosArray(todos);
+    console.log("1", todos);
   }, [todos]);
 
   // console.log("todosArray", todosArray);
@@ -50,8 +51,8 @@ const IndexPage: React.FC<IndexProps> = () => {
     const newCategories = new Set(newTodos.map((todo: Todo) => todo.category));
     const newUniqueCategories = [...newCategories] as string[];
 
-    setTodosArray(newTodos);
-    setCategoriesArray(newUniqueCategories);
+    setTodos(newTodos);
+    // setCategoriesArray(newUniqueCategories);
   };
 
   const addTodo = async (e: React.MouseEvent, todo: NoIdTodo) => {
@@ -67,7 +68,7 @@ const IndexPage: React.FC<IndexProps> = () => {
 
     await createTodoToServer(newTodo);
 
-    setTodosArray([...todosArray, newTodo]);
+    setTodos([...todosArray, newTodo]);
   };
 
   const updateTodo = async (e: React.MouseEvent, todo: Todo) => {
@@ -87,7 +88,7 @@ const IndexPage: React.FC<IndexProps> = () => {
         : _todo
     );
 
-    setTodosArray(newTodos);
+    setTodos(newTodos);
     updateTodosToServer(newTodos);
 
     const newCategories = new Set(newTodos.map((todo: Todo) => todo.category));
@@ -96,7 +97,7 @@ const IndexPage: React.FC<IndexProps> = () => {
   return (
     <>
       {isLoading && <BoxWrapStyled>Loading...</BoxWrapStyled>}
-      {!isLoading && todosArray && (
+      {!isLoading && todos && (
         <BoxWrapStyled>
           <ListStyled>
             {uniqueCategories.map((category) => (
@@ -107,11 +108,9 @@ const IndexPage: React.FC<IndexProps> = () => {
           </ListStyled>
           <TodoForm categories={uniqueCategories} addTodo={addTodo}></TodoForm>
           <TodoDragableList
-            todos={todosArray}
             categories={uniqueCategories}
             deleteTodo={deleteTodo}
             updateTodo={updateTodo}
-            setTodosArray={setTodosArray}
           />
         </BoxWrapStyled>
       )}

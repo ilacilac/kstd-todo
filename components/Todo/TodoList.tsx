@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useRouter } from "next/router";
 import { Box, List } from "@mui/material";
 import { styled } from "@mui/system";
@@ -6,6 +6,7 @@ import { Todo } from "../../types/todo";
 import TodoListItem from "./TodoListItem";
 import { getTodosFromServer } from "service/todos";
 import { useQuery } from "react-query";
+import { useTodos } from "context/TodoContext";
 
 type TodoListProps = {
   setTodosArray: Dispatch<SetStateAction<Todo[]>>;
@@ -23,46 +24,35 @@ const TodoList: React.FC<TodoListProps> = ({
 }) => {
   const { category } = useRouter().query;
   const { isLoading, data } = useQuery("todos", getTodosFromServer);
-  const [todosArray, setTodosArray] = useState<Todo[]>(data);
+  const { todos, setTodos } = useTodos();
   return (
     <TodoListWrapStyled>
       <Box sx={{ margin: 0, padding: 0 }}>
         {!category && (
           <List sx={{ margin: 0, padding: 0 }}>
-            {todosArray.map((todo, index) => (
-              <TodoListItem
-                key={todo.id}
-                todo={todo}
-                todos={todosArray}
-                deleteTodo={deleteTodo}
-                updateTodo={updateTodo}
-                categories={categories}
-                setCategoriesArray={setCategoriesArray}
-              />
+            {todos.map((todo, index) => (
+              <TodoListItem key={todo.id} todo={todo} categories={categories} />
             ))}
           </List>
         )}
         {category && (
           <List sx={{ margin: 0, padding: 0 }}>
-            {todosArray &&
-              todosArray.map((todo, index) =>
+            {todos &&
+              todos.map((todo, index) =>
                 todo.category === category ? (
                   <TodoListItem
                     key={todo.id}
                     todo={todo}
-                    todos={todosArray}
-                    deleteTodo={deleteTodo}
-                    updateTodo={updateTodo}
-                    setCategoriesArray={setCategoriesArray}
                     categories={categories}
                   />
                 ) : (
                   ""
                 )
               )}
-            {!todosArray && <NoTaskBox>등록된 항목이 없습니다.</NoTaskBox>}
-            {!todosArray.map((todo, index) => todo.category === category)
-              .length && <NoTaskBox>등록된 항목이 없습니다.</NoTaskBox>}
+            {!todos && <NoTaskBox>등록된 항목이 없습니다.</NoTaskBox>}
+            {!todos.map((todo, index) => todo.category === category).length && (
+              <NoTaskBox>등록된 항목이 없습니다.</NoTaskBox>
+            )}
           </List>
         )}
       </Box>

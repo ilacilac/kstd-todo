@@ -24,10 +24,11 @@ import StatusSelect from "components/Common/StatusSelect";
 import DateField from "components/Common/DateField";
 import { QueryCache, useMutation, useQuery } from "react-query";
 import { getTodosFromServer, updateTodosToServer } from "service/todos";
+import { useTodos } from "context/TodoContext";
 
 type TodoFormProps = {
   todo: Todo;
-  todos: Todo[];
+
   handleClose: () => void;
 
   categories: string[];
@@ -46,14 +47,14 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
   const [priority, setPriority] = useState(todo.priority);
   const [status, setStatus] = useState(todo.status);
 
-  const { isLoading, data: todos } = useQuery(
-    ["todos"],
-    () => getTodosFromServer(),
-    {
-      initialData: [], // 초기 데이터 설정
-    }
-  );
-
+  // const { isLoading, data: todos } = useQuery(
+  //   ["todos"],
+  //   () => getTodosFromServer(),
+  //   {
+  //     initialData: [], // 초기 데이터 설정
+  //   }
+  // );
+  const { todos, setTodos } = useTodos();
   const { mutate: updateMutateTodo } = useMutation(
     ["updateTodos"],
     (todo: Todo) => {
@@ -72,6 +73,24 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
       );
 
       return updateTodosToServer(newTodos);
+    },
+    {
+      onSuccess: (_, v) => {
+        const newTodos = todos.map((_todo: Todo) =>
+          _todo.id === v.id
+            ? {
+                id: _todo.id,
+                task,
+                category,
+                startDate,
+                endDate,
+                priority,
+                status,
+              }
+            : _todo
+        );
+        setTodos(newTodos);
+      },
     }
   );
 

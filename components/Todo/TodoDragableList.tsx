@@ -9,23 +9,18 @@ import { getTodosFromServer, updateTodosToServer } from "service/todos";
 import { useRouter } from "next/router";
 import TodoDragableListItem from "./TodoDragableListItem";
 import { useMutation, useQuery } from "react-query";
+import { useTodos } from "context/TodoContext";
 
 type TodoListProps = {
-  todos: Todo[];
   categories: string[];
-  setTodosArray: Dispatch<SetStateAction<Todo[]>>;
 
   deleteTodo: (id: string) => void;
   updateTodo: (e: React.MouseEvent, todo: Todo) => void;
 };
 
-const TodoDragableList: React.FC<TodoListProps> = ({
-  todos,
-  categories,
-  setTodosArray,
-}) => {
+const TodoDragableList: React.FC<TodoListProps> = ({ categories }) => {
   const { category } = useRouter().query;
-
+  const { todos, setTodos } = useTodos();
   let newTodos = todos;
 
   const { mutate: updateMutateTodo } = useMutation(["updateTodos"], () =>
@@ -74,9 +69,7 @@ const TodoDragableList: React.FC<TodoListProps> = ({
                     key={todo.id}
                     index={index}
                     todo={todo}
-                    todos={todos}
                     categories={categories}
-                    setTodosArray={setTodosArray}
                   />
                 ))}
                 {!todos.length && (

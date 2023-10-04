@@ -9,8 +9,6 @@ type ModalProps = {
   handleClose: () => void;
   open: boolean;
   todo: Todo;
-  todos: Todo[];
-
   categories: string[];
 };
 
@@ -18,7 +16,6 @@ const TodoModal: React.FC<ModalProps> = ({
   handleClose,
   open,
   todo,
-  todos,
   categories,
 }) => {
   const style = {
@@ -54,7 +51,6 @@ const TodoModal: React.FC<ModalProps> = ({
         </Button>
         <FetchTodoForm
           todo={todo}
-          todos={todos}
           handleClose={handleClose}
           categories={categories}
         />
