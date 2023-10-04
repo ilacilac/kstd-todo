@@ -4,9 +4,11 @@ import { Box, List } from "@mui/material";
 import { styled } from "@mui/system";
 import { Todo } from "../../types/todo";
 import TodoListItem from "./TodoListItem";
+import { getTodosFromServer } from "service/todos";
+import { useQuery } from "react-query";
+import { useTodos } from "context/TodoContext";
 
 type TodoListProps = {
-  todos: Todo[];
   setTodosArray: Dispatch<SetStateAction<Todo[]>>;
   setCategoriesArray: Dispatch<SetStateAction<string[]>>;
   deleteTodo: (id: string) => void;
@@ -15,29 +17,21 @@ type TodoListProps = {
 };
 
 const TodoList: React.FC<TodoListProps> = ({
-  todos,
   deleteTodo,
   categories,
   setCategoriesArray,
   updateTodo,
 }) => {
   const { category } = useRouter().query;
-
+  const { isLoading, data } = useQuery("todos", getTodosFromServer);
+  const { todos, setTodos } = useTodos();
   return (
     <TodoListWrapStyled>
       <Box sx={{ margin: 0, padding: 0 }}>
         {!category && (
           <List sx={{ margin: 0, padding: 0 }}>
             {todos.map((todo, index) => (
-              <TodoListItem
-                key={todo.id}
-                todo={todo}
-                todos={todos}
-                deleteTodo={deleteTodo}
-                updateTodo={updateTodo}
-                categories={categories}
-                setCategoriesArray={setCategoriesArray}
-              />
+              <TodoListItem key={todo.id} todo={todo} categories={categories} />
             ))}
           </List>
         )}
@@ -49,10 +43,6 @@ const TodoList: React.FC<TodoListProps> = ({
                   <TodoListItem
                     key={todo.id}
                     todo={todo}
-                    todos={todos}
-                    deleteTodo={deleteTodo}
-                    updateTodo={updateTodo}
-                    setCategoriesArray={setCategoriesArray}
                     categories={categories}
                   />
                 ) : (

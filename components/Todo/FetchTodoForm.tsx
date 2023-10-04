@@ -22,20 +22,21 @@ import CategoryTextField from "components/Common/CategoryTextField";
 import PrioritySelect from "components/Common/PrioritySelect";
 import StatusSelect from "components/Common/StatusSelect";
 import DateField from "components/Common/DateField";
+import { QueryCache, useMutation, useQuery } from "react-query";
+import { getTodosFromServer, updateTodosToServer } from "service/todos";
+import { useTodos } from "context/TodoContext";
 
 type TodoFormProps = {
   todo: Todo;
-  todos: Todo[];
+
   handleClose: () => void;
 
-  setCategoriesArray: Dispatch<SetStateAction<string[]>>;
   categories: string[];
-  updateTodo: (e: React.MouseEvent, todo: Todo) => void;
 };
 
 const FetchTodoForm: React.FC<TodoFormProps> = ({
   todo,
-  updateTodo,
+
   handleClose,
   categories,
 }) => {
@@ -45,6 +46,53 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
   const [endDate, setEndDate] = useState(new Date(todo.endDate));
   const [priority, setPriority] = useState(todo.priority);
   const [status, setStatus] = useState(todo.status);
+
+  // const { isLoading, data: todos } = useQuery(
+  //   ["todos"],
+  //   () => getTodosFromServer(),
+  //   {
+  //     initialData: [], // 초기 데이터 설정
+  //   }
+  // );
+  const { todos, setTodos } = useTodos();
+  const { mutate: updateMutateTodo } = useMutation(
+    ["updateTodos"],
+    (todo: Todo) => {
+      const newTodos = todos.map((_todo: Todo) =>
+        _todo.id === todo.id
+          ? {
+              id: todo.id,
+              task: todo.task,
+              category: todo.category,
+              startDate: todo.startDate,
+              endDate: todo.endDate,
+              priority: todo.priority,
+              status: todo.status,
+            }
+          : _todo
+      );
+
+      return updateTodosToServer(newTodos);
+    },
+    {
+      onSuccess: (_, v) => {
+        const newTodos = todos.map((_todo: Todo) =>
+          _todo.id === v.id
+            ? {
+                id: _todo.id,
+                task,
+                category,
+                startDate,
+                endDate,
+                priority,
+                status,
+              }
+            : _todo
+        );
+        setTodos(newTodos);
+      },
+    }
+  );
 
   return (
     <FormGroup>
@@ -79,7 +127,7 @@ const FetchTodoForm: React.FC<TodoFormProps> = ({
 
       <Button
         onClick={(e) => {
-          updateTodo(e, {
+          updateMutateTodo({
             id: todo.id,
             task,
             category,

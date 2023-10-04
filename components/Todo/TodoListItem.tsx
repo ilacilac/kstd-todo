@@ -6,25 +6,20 @@ import EditIcon from "@mui/icons-material/Edit";
 import { Todo } from "../../types/todo";
 import ModalPortal from "components/Modal/ModalPortal";
 import TodoModal from "components/Modal/TodoModal";
+import { useTodos } from "context/TodoContext";
+import { useMutation } from "react-query";
+import { deleteTodoFromServer } from "service/todos";
 
 type TodoListItemProps = {
   todo: Todo;
-  todos: Todo[];
+
   categories: string[];
-  deleteTodo: (id: string) => void;
-  setCategoriesArray: Dispatch<SetStateAction<string[]>>;
-  updateTodo: (e: React.MouseEvent, todo: Todo) => void;
 };
 
-const TodoListItem: React.FC<TodoListItemProps> = ({
-  todo,
-  todos,
-  deleteTodo,
-  updateTodo,
-  setCategoriesArray,
-  categories,
-}) => {
+const TodoListItem: React.FC<TodoListItemProps> = ({ todo, categories }) => {
   const [open, setOpen] = useState(false);
+  const { todos, setTodos } = useTodos();
+
   const handleOpen = () => {
     setOpen(true);
   };
@@ -35,6 +30,14 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
   const onClick = () => {
     handleOpen();
   };
+
+  const deleteTodo = useMutation((id: string) => deleteTodoFromServer(id), {
+    onSuccess: (_, id) => {
+      const newTodos = todos.filter((todo) => todo.id !== id);
+      console.log(newTodos);
+      setTodos(newTodos);
+    },
+  });
 
   return (
     <>
@@ -89,7 +92,7 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
           </Button>
           <Button
             sx={buttonCommonStyle}
-            onClick={() => deleteTodo(todo.id)}
+            onClick={() => deleteTodo.mutate(todo.id)}
             title="삭제하기"
           >
             <DeleteIcon fontSize="small" />
@@ -103,10 +106,7 @@ const TodoListItem: React.FC<TodoListItemProps> = ({
             handleClose={handleClose}
             open={open}
             todo={todo}
-            todos={todos}
-            updateTodo={updateTodo}
             categories={categories}
-            setCategoriesArray={setCategoriesArray}
           />
         </ModalPortal>
       )}

@@ -73,7 +73,6 @@ const TodosPage: React.FC<TodosProps> = ({ todos, categories }) => {
         <SectionStyled>
           <TodoList
             setTodosArray={setTodosArray}
-            todos={todosArray}
             deleteTodo={deleteTodo}
             categories={categoriesArray}
             setCategoriesArray={setCategoriesArray}

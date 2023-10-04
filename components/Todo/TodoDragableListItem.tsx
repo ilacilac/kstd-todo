@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import { Box, Button, ListItem, styled, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -7,26 +7,25 @@ import { Todo } from "../../types/todo";
 import ModalPortal from "components/Modal/ModalPortal";
 import TodoModal from "components/Modal/TodoModal";
 import dayjs from "dayjs";
+import { useMutation, useQueryClient } from "react-query";
+import { deleteTodoFromServer } from "service/todos";
+import { useTodos } from "context/TodoContext";
 
 type TodoListItemProps = {
   todo: Todo;
-  todos: Todo[];
   index: number;
-  deleteTodo: (id: string) => void;
-  updateTodo: (e: React.MouseEvent, todo: Todo) => void;
-  setCategoriesArray: Dispatch<SetStateAction<string[]>>;
+
   categories: string[];
 };
 
 const TodoDragableListItem: React.FC<TodoListItemProps> = ({
   todo,
-  todos,
+
   index,
-  deleteTodo,
-  updateTodo,
-  setCategoriesArray,
   categories,
 }) => {
+  const queryClient = useQueryClient();
+  const { todos, setTodos } = useTodos();
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
     setOpen(true);
@@ -38,6 +37,14 @@ const TodoDragableListItem: React.FC<TodoListItemProps> = ({
   const onClick = () => {
     handleOpen();
   };
+
+  const deleteTodo = useMutation((id: string) => deleteTodoFromServer(id), {
+    onSuccess: (_, id) => {
+      const newTodos = todos.filter((todo) => todo.id !== id);
+      console.log(newTodos);
+      setTodos(newTodos);
+    },
+  });
 
   return (
     <>
@@ -100,7 +107,7 @@ const TodoDragableListItem: React.FC<TodoListItemProps> = ({
               </Button>
               <Button
                 sx={buttonCommonStyle}
-                onClick={() => deleteTodo(todo.id)}
+                onClick={() => deleteTodo.mutate(todo.id)}
                 title="삭제하기"
               >
                 <DeleteIcon fontSize="small" />
@@ -115,10 +122,7 @@ const TodoDragableListItem: React.FC<TodoListItemProps> = ({
             handleClose={handleClose}
             open={open}
             todo={todo}
-            todos={todos}
             categories={categories}
-            setCategoriesArray={setCategoriesArray}
-            updateTodo={updateTodo}
           />
         </ModalPortal>
       )}

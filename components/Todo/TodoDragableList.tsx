@@ -2,33 +2,30 @@ import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { Box, List } from "@mui/material";
 import { Todo } from "../../types/todo";
 
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { styled } from "@mui/system";
 
-import { updateTodosToServer } from "service/todos";
+import { getTodosFromServer, updateTodosToServer } from "service/todos";
 import { useRouter } from "next/router";
 import TodoDragableListItem from "./TodoDragableListItem";
+import { useMutation, useQuery } from "react-query";
+import { useTodos } from "context/TodoContext";
 
 type TodoListProps = {
-  todos: Todo[];
   categories: string[];
-  setTodosArray: Dispatch<SetStateAction<Todo[]>>;
-  setCategoriesArray: Dispatch<SetStateAction<string[]>>;
+
   deleteTodo: (id: string) => void;
   updateTodo: (e: React.MouseEvent, todo: Todo) => void;
 };
 
-const TodoDragableList: React.FC<TodoListProps> = ({
-  todos,
-
-  categories,
-  setTodosArray,
-  setCategoriesArray,
-  deleteTodo,
-  updateTodo,
-}) => {
+const TodoDragableList: React.FC<TodoListProps> = ({ categories }) => {
   const { category } = useRouter().query;
+  const { todos, setTodos } = useTodos();
+  let newTodos = todos;
 
+  const { mutate: updateMutateTodo } = useMutation(["updateTodos"], () =>
+    updateTodosToServer(newTodos)
+  );
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
 
@@ -41,7 +38,6 @@ const TodoDragableList: React.FC<TodoListProps> = ({
       return;
 
     let add: Todo;
-    let newTodos = todos;
 
     add = newTodos[source.index];
 
@@ -54,8 +50,7 @@ const TodoDragableList: React.FC<TodoListProps> = ({
       newTodos.splice(destination.index, 0, { ...add });
     }
 
-    setTodosArray(newTodos);
-    updateTodosToServer(newTodos);
+    updateMutateTodo();
   };
 
   return (
@@ -74,11 +69,7 @@ const TodoDragableList: React.FC<TodoListProps> = ({
                     key={todo.id}
                     index={index}
                     todo={todo}
-                    todos={todos}
-                    deleteTodo={deleteTodo}
                     categories={categories}
-                    setCategoriesArray={setCategoriesArray}
-                    updateTodo={updateTodo}
                   />
                 ))}
                 {!todos.length && (
